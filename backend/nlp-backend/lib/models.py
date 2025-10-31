@@ -58,3 +58,6 @@ class BatchSentimentResponse(BaseModel):
     """Response model for batch sentiment analysis"""
     results: List[BatchSentimentResult] = Field(..., description="Results for each text")
 
+class ParaphraseResponse(BaseModel):
+    """Response model for paraphrasing"""
+    paraphrased_text: str = Field(..., description="The paraphrased text")

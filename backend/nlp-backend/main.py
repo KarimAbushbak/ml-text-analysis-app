@@ -11,9 +11,10 @@ from lib.routes import router
 from lib.providers.model_providers import (
     SentimentModelProvider,
     NERModelProvider,
-    TranslationModelProvider
+    TranslationModelProvider,
+    ParaphraseModelProvider
 )
-from lib.services import SentimentService, NERService, TranslationService
+from lib.services import ParaphraseService, SentimentService, NERService, TranslationService
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -38,11 +39,14 @@ app.add_middleware(
 # Initialize model providers
 sentiment_model = SentimentModelProvider()
 ner_model = NERModelProvider()
+translation_model = TranslationModelProvider()
+paraphrase_model = ParaphraseModelProvider()
 
 # Initialize services
 sentiment_service = SentimentService(sentiment_model)
 ner_service = NERService(ner_model)
-translation_service = TranslationService(TranslationModelProvider())
+translation_service = TranslationService(translation_model)
+paraphrase_service = ParaphraseService(paraphrase_model)
 
 
 def load_models():
@@ -51,6 +55,8 @@ def load_models():
     try:
         sentiment_model.load_model()
         ner_model.load_model()
+        paraphrase_model.load_model()
+        # Translation models are loaded on-demand based on language pairs
         logger.info("All models loaded successfully!")
     except Exception as e:
         logger.error(f"Error loading models: {e}")

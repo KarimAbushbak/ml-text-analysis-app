@@ -6,9 +6,10 @@ from typing import List, Dict, Any
 from lib.providers.model_providers import (
     SentimentModelProvider,
     NERModelProvider,
-    TranslationModelProvider
+    TranslationModelProvider,
+    ParaphraseModelProvider,
 )
-from lib.models import Entity, NERResponse, SentimentResponse, BatchSentimentResult
+from lib.models import Entity, NERResponse, SentimentResponse, BatchSentimentResult,ParaphraseResponse
 
 logger = logging.getLogger(__name__)
 
@@ -142,4 +143,23 @@ class TranslationService:
         """
         translation_result = self.model_provider.predict(text, source_lang, target_lang)
         return translation_result[0]['translation_text']
+
+class ParaphraseService:
+    """Service for paraphrasing operations"""
+    
+    def __init__(self, model_provider: ParaphraseModelProvider):
+        self.model_provider = model_provider
+    
+    def paraphrase(self, text: str) -> ParaphraseResponse:
+        """
+        Paraphrase the given text
+        
+        Args:
+            text: The text to paraphrase
+
+        Returns:
+            ParaphraseResponse object containing the paraphrased text
+        """
+        paraphrase_result = self.model_provider.predict(text)
+        return ParaphraseResponse(paraphrased_text=paraphrase_result[0]['generated_text'])
 

@@ -118,3 +118,28 @@ class TranslationModelProvider(ModelProvider):
         self.load_model(source_lang, target_lang)
         return self.pipeline(text)
 
+class ParaphraseModelProvider(ModelProvider):
+    def __init__(self, model_name: str = "tuner007/pegasus_paraphrase"):
+        super().__init__()
+        self.model_name = model_name
+    
+    def load_model(self):
+        """Load the paraphrasing model"""
+        try:
+            logger.info(f"Loading paraphrasing model: {self.model_name}")
+            self.pipeline = pipeline(
+                "text2text-generation",
+                model=self.model_name,
+                max_length=60,
+                num_beams=5,
+                num_return_sequences=3
+            )
+            logger.info("Paraphrasing model loaded successfully!")
+        except Exception as e:
+            logger.error(f"Error loading paraphrasing model: {e}")
+            raise
+    def predict(self, text: str):
+        """Perform paraphrasing on text"""
+        if not self.pipeline:
+            raise ValueError("Model not loaded")
+        return self.pipeline(text)

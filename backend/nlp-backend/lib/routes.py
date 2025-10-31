@@ -3,6 +3,7 @@ API routes for the NLP application
 """
 from fastapi import APIRouter, HTTPException, Depends
 from lib.models import (
+    ParaphraseResponse,
     TextInput,
     BatchTextInput,
     TranslationInput,
@@ -11,7 +12,7 @@ from lib.models import (
     NERResponse,
     BatchSentimentResponse
 )
-from lib.services import SentimentService, NERService, TranslationService
+from lib.services import ParaphraseService, SentimentService, NERService, TranslationService
 
 # Create router
 router = APIRouter()
@@ -34,6 +35,10 @@ def get_translation_service() -> TranslationService:
     from main import translation_service
     return translation_service
 
+def get_paraphrase_service() -> ParaphraseService:
+    """Dependency to get paraphrase service"""
+    from main import paraphrase_service
+    return paraphrase_service
 
 # Health check endpoints
 @router.get("/")
@@ -45,12 +50,13 @@ async def root():
 @router.get("/health")
 async def health_check():
     """Detailed health check endpoint"""
-    from main import sentiment_model, ner_model
+    from main import sentiment_model, ner_model, paraphrase_model
     return {
         "status": "healthy",
         "models": {
             "sentiment": sentiment_model.is_loaded() if sentiment_model else False,
-            "ner": ner_model.is_loaded() if ner_model else False
+            "ner": ner_model.is_loaded() if ner_model else False,
+            "paraphrase": paraphrase_model.is_loaded() if paraphrase_model else False
         }
     }
 
@@ -121,3 +127,16 @@ async def translate_text(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Translation failed: {str(e)}")
 
+# Paraphrasing endpoints
+@router.post("/paraphrase", response_model=ParaphraseResponse)
+async def paraphrase_text(
+    input_data: TextInput,
+    service: ParaphraseService = Depends(get_paraphrase_service)
+):
+    """
+    Paraphrase the provided text
+    """
+    try:
+        return service.paraphrase(input_data.text)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Paraphrasing failed: {str(e)}")
