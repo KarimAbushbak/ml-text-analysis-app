@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sentiment_app/translation_screen.dart';
-import 'package:sentiment_app/translation_cubit.dart';
+import 'core/theme/app_theme.dart';
+import 'core/routing/app_router.dart';
 
+/// Main entry point of LinguaSense app
 void main() {
-  runApp(const MyApp());
+  runApp(const LinguaSenseApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+/// Root widget of the app
+class LinguaSenseApp extends StatelessWidget {
+  const LinguaSenseApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => TranslationCubit(),
-      child: MaterialApp(
-        title: 'Translation App',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        ),
-        home: const TranslationScreen(),
-      ),
+    return MaterialApp.router(
+      title: 'LinguaSense',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
+      routerConfig: AppRouter.router,
     );
   }
 }
-
