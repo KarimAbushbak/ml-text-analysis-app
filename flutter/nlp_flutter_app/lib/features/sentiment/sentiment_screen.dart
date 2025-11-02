@@ -26,7 +26,7 @@ class _SentimentScreenState extends State<SentimentScreen> {
     super.dispose();
   }
 
-  void _analyzeSentiment() {
+  void _analyzeSentiment(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       context.read<SentimentCubit>().analyzeSentiment(_textController.text);
     }
@@ -34,88 +34,93 @@ class _SentimentScreenState extends State<SentimentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sentiment Analysis'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+    return BlocProvider(
+      create: (context) => SentimentCubit(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Sentiment Analysis'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
-      ),
-      body: BlocProvider(
-        create: (context) => SentimentCubit(),
-        child: SingleChildScrollView(
+        body: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
-                  'Enter the text you want to analyze',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
+                  const Text(
+                    'Enter the text you want to analyze',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                TextInputField(
-                  controller: _textController,
-                  label: 'Your Text',
-                  hint: 'Type or paste your text here...',
-                  maxLines: 8,
-                  maxLength: 500,
-                ),
-                const SizedBox(height: 24),
-                PrimaryButton(
-                  text: 'Analyze Sentiment',
-                  gradient: AppColors.greenGradient,
-                  onPressed: _analyzeSentiment,
-                ),
-                const SizedBox(height: 32),
-                BlocBuilder<SentimentCubit, SentimentState>(
-                  builder: (context, state) {
-                    if (state is SentimentLoading) {
-                      return const Center(child: LoadingIndicator());
-                    }
-                    
-                    if (state is SentimentSuccess) {
-                      return ResultCard(
-                        title: 'Sentiment Result',
-                        icon: Icons.sentiment_satisfied,
-                        color: AppColors.primaryGreen,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildSentimentResult(
-                              'Sentiment',
-                              state.result.sentiment,
-                              _getSentimentColor(state.result.sentiment),
-                            ),
-                            const SizedBox(height: 12),
-                            _buildSentimentResult(
-                              'Confidence',
-                              '${(state.result.confidence * 100).toStringAsFixed(1)}%',
-                              AppColors.primaryBlue,
-                            ),
-                          ],
-                        ),
+                  const SizedBox(height: 20),
+                  TextInputField(
+                    controller: _textController,
+                    label: 'Your Text',
+                    hint: 'Type or paste your text here...',
+                    maxLines: 8,
+                    maxLength: 500,
+                  ),
+                  const SizedBox(height: 24),
+                  Builder(
+                    builder: (context) {
+                      return PrimaryButton(
+                        text: 'Analyze Sentiment',
+                        gradient: AppColors.greenGradient,
+                        onPressed: () => _analyzeSentiment(context),
                       );
                     }
+                  ),
+                  const SizedBox(height: 32),
+                  BlocBuilder<SentimentCubit, SentimentState>(
+                    builder: (context, state) {
+                      if (state is SentimentLoading) {
+                        return const Center(child: LoadingIndicator());
+                      }
 
-                    if (state is SentimentError) {
-                      return ResultCard(
-                        title: 'Error',
-                        icon: Icons.error_outline,
-                        color: AppColors.primaryRed,
-                        content: state.message,
-                      );
-                    }
+                      if (state is SentimentSuccess) {
+                        return ResultCard(
+                          title: 'Sentiment Result',
+                          icon: Icons.sentiment_satisfied,
+                          color: AppColors.primaryGreen,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildSentimentResult(
+                                'Sentiment',
+                                state.result.sentiment,
+                                _getSentimentColor(state.result.sentiment),
+                              ),
+                              const SizedBox(height: 12),
+                              _buildSentimentResult(
+                                'Confidence',
+                                '${(state.result.confidence * 100)
+                                    .toStringAsFixed(1)}%',
+                                AppColors.primaryBlue,
+                              ),
+                            ],
+                          ),
+                        );
+                      }
 
-                    return const SizedBox.shrink();
-                  },
-                ),
-              ],
+                      if (state is SentimentError) {
+                        return ResultCard(
+                          title: 'Error',
+                          icon: Icons.error_outline,
+                          color: AppColors.primaryRed,
+                          content: state.message,
+                        );
+                      }
+
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ],
             ),
           ),
         ),
