@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../core/theme/theme_provider.dart';
 
 /// Settings screen
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
-  bool _isDarkMode = false;
-
-  @override
   Widget build(BuildContext context) {
+    final themeProvider = context.watch<ThemeProvider>();
+    final isDarkMode = themeProvider.isDarkMode;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -25,12 +23,47 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           SwitchListTile(
             title: const Text('Dark Mode'),
-            subtitle: const Text('Toggle dark theme'),
-            value: _isDarkMode,
+            subtitle: Text(
+              themeProvider.themeMode == ThemeMode.system
+                  ? 'Following system theme'
+                  : isDarkMode
+                      ? 'Dark theme enabled'
+                      : 'Light theme enabled',
+            ),
+            value: isDarkMode,
             onChanged: (value) {
-              setState(() => _isDarkMode = value);
-              // TODO: Implement theme toggle
+              if (value) {
+                themeProvider.setThemeMode(ThemeMode.dark);
+              } else {
+                themeProvider.setThemeMode(ThemeMode.light);
+              }
             },
+          ),
+          ListTile(
+            title: const Text('Theme Mode'),
+            subtitle: const Text('Choose how theme is determined'),
+            trailing: DropdownButton<ThemeMode>(
+              value: themeProvider.themeMode,
+              items: const [
+                DropdownMenuItem(
+                  value: ThemeMode.system,
+                  child: Text('System'),
+                ),
+                DropdownMenuItem(
+                  value: ThemeMode.light,
+                  child: Text('Light'),
+                ),
+                DropdownMenuItem(
+                  value: ThemeMode.dark,
+                  child: Text('Dark'),
+                ),
+              ],
+              onChanged: (mode) {
+                if (mode != null) {
+                  themeProvider.setThemeMode(mode);
+                }
+              },
+            ),
           ),
           const Divider(),
           ListTile(
