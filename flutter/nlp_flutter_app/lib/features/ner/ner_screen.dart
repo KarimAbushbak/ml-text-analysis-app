@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/widgets/text_input_field.dart';
 import '../../core/widgets/primary_button.dart';
 import '../../core/widgets/result_card.dart';
-import '../../core/widgets/loading_indicator.dart';
 import '../../core/theme/app_colors.dart';
-import 'ner_service.dart';
 
 /// Named Entity Recognition screen
 class NERScreen extends StatefulWidget {
@@ -16,10 +14,7 @@ class NERScreen extends StatefulWidget {
 
 class _NERScreenState extends State<NERScreen> {
   final _textController = TextEditingController();
-  final _service = NERService();
-  List<Entity>? _entities;
-  bool _isLoading = false;
-  String? _errorMessage;
+  List<Map<String, String>>? _entities;
 
   @override
   void dispose() {
@@ -27,34 +22,15 @@ class _NERScreenState extends State<NERScreen> {
     super.dispose();
   }
 
-  Future<void> _recognizeEntities() async {
-    if (_textController.text.trim().isEmpty) {
-      setState(() {
-        _errorMessage = 'Please enter some text to analyze';
-        _entities = null;
-      });
-      return;
-    }
-
+  void _recognizeEntities() {
+    // TODO: Implement NER logic
     setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-      _entities = null;
+      _entities = [
+        {'name': 'John Doe', 'type': 'Person'},
+        {'name': 'New York', 'type': 'Location'},
+        {'name': 'January 2024', 'type': 'Date'},
+      ];
     });
-
-    try {
-      final result = await _service.recognizeEntities(_textController.text);
-      setState(() {
-        _entities = result;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _errorMessage = e.toString().replaceAll('Exception: ', '');
-        _isLoading = false;
-        _entities = null;
-      });
-    }
   }
 
   @override
@@ -83,12 +59,10 @@ class _NERScreenState extends State<NERScreen> {
             PrimaryButton(
               text: 'Find Entities',
               gradient: AppColors.purpleGradient,
-              onPressed: _isLoading ? null : _recognizeEntities,
+              onPressed: _recognizeEntities,
             ),
-            const SizedBox(height: 24),
-            if (_isLoading) ...[
-              const Center(child: LoadingIndicator()),
-            ] else if (_entities != null && _entities!.isNotEmpty) ...[
+            if (_entities != null) ...[
+              const SizedBox(height: 24),
               ResultCard(
                 title: 'Found Entities',
                 icon: Icons.person_search,
@@ -97,20 +71,6 @@ class _NERScreenState extends State<NERScreen> {
                   children: _entities!.map((entity) => _buildEntityChip(entity)).toList(),
                 ),
               ),
-            ] else if (_entities != null && _entities!.isEmpty) ...[
-              ResultCard(
-                title: 'No Entities Found',
-                icon: Icons.info_outline,
-                color: AppColors.primaryBlue,
-                content: 'No named entities were found in the provided text.',
-              ),
-            ] else if (_errorMessage != null) ...[
-              ResultCard(
-                title: 'Error',
-                icon: Icons.error_outline,
-                color: AppColors.primaryRed,
-                content: _errorMessage!,
-              ),
             ],
           ],
         ),
@@ -118,7 +78,7 @@ class _NERScreenState extends State<NERScreen> {
     );
   }
 
-  Widget _buildEntityChip(Entity entity) {
+  Widget _buildEntityChip(Map<String, String> entity) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Container(
@@ -130,14 +90,14 @@ class _NERScreenState extends State<NERScreen> {
         child: Row(
           children: [
             Icon(
-              _getEntityIcon(entity.type),
+              _getEntityIcon(entity['type']!),
               color: AppColors.primaryPurple,
               size: 20,
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                entity.name,
+                entity['name']!,
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
             ),
@@ -148,7 +108,7 @@ class _NERScreenState extends State<NERScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                entity.type,
+                entity['type']!,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 12,

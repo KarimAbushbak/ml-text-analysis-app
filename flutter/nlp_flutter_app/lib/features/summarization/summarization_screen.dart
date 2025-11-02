@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/widgets/text_input_field.dart';
 import '../../core/widgets/primary_button.dart';
 import '../../core/widgets/result_card.dart';
-import '../../core/widgets/loading_indicator.dart';
 import '../../core/theme/app_colors.dart';
-import 'summarization_service.dart';
 
 /// Text Summarization screen
 class SummarizationScreen extends StatefulWidget {
@@ -16,11 +14,8 @@ class SummarizationScreen extends StatefulWidget {
 
 class _SummarizationScreenState extends State<SummarizationScreen> {
   final _textController = TextEditingController();
-  final _service = SummarizationService();
   String? _summary;
   double _ratio = 0.3;
-  bool _isLoading = false;
-  String? _errorMessage;
 
   @override
   void dispose() {
@@ -28,37 +23,11 @@ class _SummarizationScreenState extends State<SummarizationScreen> {
     super.dispose();
   }
 
-  Future<void> _summarize() async {
-    if (_textController.text.trim().isEmpty) {
-      setState(() {
-        _errorMessage = 'Please enter some text to summarize';
-        _summary = null;
-      });
-      return;
-    }
-
+  void _summarize() {
+    // TODO: Implement summarization logic
     setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-      _summary = null;
+      _summary = 'Summarization feature coming soon!';
     });
-
-    try {
-      final result = await _service.summarize(
-        text: _textController.text,
-        ratio: _ratio,
-      );
-      setState(() {
-        _summary = result;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _errorMessage = e.toString().replaceAll('Exception: ', '');
-        _isLoading = false;
-        _summary = null;
-      });
-    }
   }
 
   @override
@@ -100,24 +69,15 @@ class _SummarizationScreenState extends State<SummarizationScreen> {
             PrimaryButton(
               text: 'Summarize',
               gradient: AppColors.orangeGradient,
-              onPressed: _isLoading ? null : _summarize,
+              onPressed: _summarize,
             ),
-            const SizedBox(height: 24),
-            if (_isLoading) ...[
-              const Center(child: LoadingIndicator()),
-            ] else if (_summary != null) ...[
+            if (_summary != null) ...[
+              const SizedBox(height: 24),
               ResultCard(
                 title: 'Summary',
                 icon: Icons.summarize,
                 color: AppColors.primaryOrange,
                 content: _summary!,
-              ),
-            ] else if (_errorMessage != null) ...[
-              ResultCard(
-                title: 'Error',
-                icon: Icons.error_outline,
-                color: AppColors.primaryRed,
-                content: _errorMessage!,
               ),
             ],
           ],

@@ -63,9 +63,6 @@ class ApiClient {
   /// Handle HTTP response
   static Map<String, dynamic> _handleResponse(http.Response response) {
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      if (response.body.isEmpty) {
-        return <String, dynamic>{};
-      }
       return jsonDecode(response.body) as Map<String, dynamic>;
     } else {
       throw Exception(
