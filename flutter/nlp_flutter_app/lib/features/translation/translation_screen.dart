@@ -55,7 +55,7 @@ class _TranslationScreenState extends State<TranslationScreen> {
               _buildLanguageSelector(
                 'From',
                 _selectedSourceLang,
-                (value) => setState(() => _selectedSourceLang = value),
+                    (value) => setState(() => _selectedSourceLang = value),
               ),
               const SizedBox(height: 20),
               TextInputField(
@@ -69,7 +69,7 @@ class _TranslationScreenState extends State<TranslationScreen> {
               _buildLanguageSelector(
                 'To',
                 _selectedTargetLang,
-                (value) => setState(() => _selectedTargetLang = value),
+                    (value) => setState(() => _selectedTargetLang = value),
               ),
               const SizedBox(height: 20),
               Builder(
@@ -148,8 +148,8 @@ class _TranslationScreenState extends State<TranslationScreen> {
         Text(
           label,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
@@ -174,4 +174,3 @@ class _TranslationScreenState extends State<TranslationScreen> {
     );
   }
 }
-
