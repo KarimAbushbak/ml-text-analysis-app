@@ -1,9 +1,8 @@
 import '../../core/utils/api_client.dart';
+import 'translation_model.dart'; // Add this
 
-/// Service for translation API calls
 class TranslationService {
-  /// Translates text from source language to target language
-  Future<String> translate({
+  Future<TranslationResult> translate({ // Change return type
     required String text,
     required String sourceLang,
     required String targetLang,
@@ -17,17 +16,15 @@ class TranslationService {
           'target_lang': targetLang,
         },
       );
-      
-      // TranslationResponse uses 'translated_text' field
-      final result = response['translated_text'] as String? ?? 
-                     response['result'] as String?;
-      if (result == null) {
-        throw Exception('Invalid response format');
-      }
-      return result;
+
+      // Backend might not return source/target lang, so we pass them
+      return TranslationResult(
+        translatedText: response['translated_text'] as String,
+        sourceLang: sourceLang,
+        targetLang: targetLang,
+      );
     } catch (e) {
       throw Exception('Failed to translate text: $e');
     }
   }
 }
-
