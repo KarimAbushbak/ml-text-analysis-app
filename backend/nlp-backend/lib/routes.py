@@ -4,6 +4,7 @@ API routes for the NLP application
 from fastapi import APIRouter, HTTPException, Depends
 from lib.models import (
     ParaphraseResponse,
+    SummarizationResponse,
     TextInput,
     BatchTextInput,
     TranslationInput,
@@ -12,7 +13,7 @@ from lib.models import (
     NERResponse,
     BatchSentimentResponse
 )
-from lib.services import ParaphraseService, SentimentService, NERService, TranslationService
+from lib.services import ParaphraseService, SentimentService, NERService, SummarizationService, TranslationService
 
 # Create router
 router = APIRouter()
@@ -40,6 +41,11 @@ def get_paraphrase_service() -> ParaphraseService:
     from main import paraphrase_service
     return paraphrase_service
 
+def get_summarization_service() -> SummarizationService:
+    """Dependency to get summarization service"""
+    from main import summarization_service
+    return summarization_service
+
 # Health check endpoints
 @router.get("/")
 async def root():
@@ -50,13 +56,14 @@ async def root():
 @router.get("/health")
 async def health_check():
     """Detailed health check endpoint"""
-    from main import sentiment_model, ner_model, paraphrase_model
+    from main import sentiment_model, ner_model, paraphrase_model, summarization_model
     return {
         "status": "healthy",
         "models": {
             "sentiment": sentiment_model.is_loaded() if sentiment_model else False,
             "ner": ner_model.is_loaded() if ner_model else False,
-            "paraphrase": paraphrase_model.is_loaded() if paraphrase_model else False
+            "paraphrase": paraphrase_model.is_loaded() if paraphrase_model else False,
+            "summarization": summarization_model.is_loaded() if summarization_model else False
         }
     }
 
@@ -140,3 +147,18 @@ async def paraphrase_text(
         return service.paraphrase(input_data.text)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Paraphrasing failed: {str(e)}")
+    
+    
+# Summarization endpoints
+@router.post("/summarize", response_model=SummarizationResponse)
+async def summarize_text(
+    input_data: TextInput,
+    service: SummarizationService = Depends(get_summarization_service)
+):
+    """
+    Summarize the provided text
+    """
+    try:
+        return service.summarize(input_data.text)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Summarization failed: {str(e)}")

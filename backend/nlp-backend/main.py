@@ -12,9 +12,10 @@ from lib.providers.model_providers import (
     SentimentModelProvider,
     NERModelProvider,
     TranslationModelProvider,
-    ParaphraseModelProvider
+    ParaphraseModelProvider,
+    SummarizationModelProvider
 )
-from lib.services import ParaphraseService, SentimentService, NERService, TranslationService
+from lib.services import ParaphraseService, SentimentService, NERService, TranslationService, SummarizationService
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -23,7 +24,7 @@ logger = logging.getLogger(__name__)
 # Initialize FastAPI app
 app = FastAPI(
     title="NLP Analysis API",
-    description="A REST API for sentiment analysis, NER, and translation using Hugging Face transformers",
+    description="A REST API for sentiment analysis, NER, translation, paraphrasing, and summarization using Hugging Face transformers",
     version="2.0.0"
 )
 
@@ -41,12 +42,14 @@ sentiment_model = SentimentModelProvider()
 ner_model = NERModelProvider()
 translation_model = TranslationModelProvider()
 paraphrase_model = ParaphraseModelProvider()
+summarization_model = SummarizationModelProvider()
 
 # Initialize services
 sentiment_service = SentimentService(sentiment_model)
 ner_service = NERService(ner_model)
 translation_service = TranslationService(translation_model)
 paraphrase_service = ParaphraseService(paraphrase_model)
+summarization_service = SummarizationService(summarization_model)
 
 
 def load_models():
@@ -56,6 +59,7 @@ def load_models():
         sentiment_model.load_model()
         ner_model.load_model()
         paraphrase_model.load_model()
+        summarization_model.load_model()
         # Translation models are loaded on-demand based on language pairs
         logger.info("All models loaded successfully!")
     except Exception as e:
