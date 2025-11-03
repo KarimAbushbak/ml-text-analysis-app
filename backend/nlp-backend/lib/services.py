@@ -6,10 +6,11 @@ from typing import List, Dict, Any
 from lib.providers.model_providers import (
     SentimentModelProvider,
     NERModelProvider,
+    SummarizationModelProvider,
     TranslationModelProvider,
     ParaphraseModelProvider,
 )
-from lib.models import Entity, NERResponse, SentimentResponse, BatchSentimentResult,ParaphraseResponse
+from lib.models import Entity, NERResponse, SentimentResponse, BatchSentimentResult, ParaphraseResponse, SummarizationResponse
 
 logger = logging.getLogger(__name__)
 
@@ -163,3 +164,24 @@ class ParaphraseService:
         paraphrase_result = self.model_provider.predict(text)
         return ParaphraseResponse(paraphrased_text=paraphrase_result[0]['generated_text'])
 
+class SummarizationService:
+    """Service for text summarization operations"""
+
+    def __init__(self, model_provider: SummarizationModelProvider):
+        self.model_provider = model_provider
+    
+    def summarize(self, text: str) -> SummarizationResponse:
+        """
+        Summarize the given text
+        
+        Args:
+            text: The text to summarize
+
+        Returns:
+            SummarizationResponse with summarized text
+        """
+        summary_result = self.model_provider.predict(text)
+        # Hugging Face summarization pipeline returns 'summary_text' key
+        return SummarizationResponse(summary_text=summary_result[0]['summary_text'])
+
+        

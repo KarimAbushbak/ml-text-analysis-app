@@ -143,3 +143,30 @@ class ParaphraseModelProvider(ModelProvider):
         if not self.pipeline:
             raise ValueError("Model not loaded")
         return self.pipeline(text)
+
+class SummarizationModelProvider(ModelProvider):
+    def __init__(self, model_name: str = "facebook/bart-large-cnn"):
+        super().__init__()
+        self.model_name = model_name
+    
+    def load_model(self):
+        """Load the summarization model"""
+        try:
+            logger.info(f"Loading summarization model: {self.model_name}")
+            self.pipeline = pipeline(
+                "summarization",
+                model=self.model_name,
+                max_length=150,
+                min_length=30,
+                do_sample=False
+            )
+            logger.info("Summarization model loaded successfully!")
+        except Exception as e:
+            logger.error(f"Error loading summarization model: {e}")
+            raise
+    
+    def predict(self, text: str):
+        """Perform summarization on text"""
+        if not self.pipeline:
+            raise ValueError("Model not loaded")
+        return self.pipeline(text)

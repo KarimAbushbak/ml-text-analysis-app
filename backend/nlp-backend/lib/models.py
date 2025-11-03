@@ -61,3 +61,7 @@ class BatchSentimentResponse(BaseModel):
 class ParaphraseResponse(BaseModel):
     """Response model for paraphrasing"""
     paraphrased_text: str = Field(..., description="The paraphrased text")
+
+class SummarizationResponse(BaseModel):
+    """Response model for text summarization"""
+    summary_text: str = Field(..., description="The summarized text")
