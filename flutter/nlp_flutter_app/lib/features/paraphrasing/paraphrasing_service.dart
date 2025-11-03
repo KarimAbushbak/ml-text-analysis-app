@@ -11,12 +11,7 @@ class ParaphrasingService {
       );
       
       // ParaphraseResponse model - check the actual field name in your backend
-      final result = response['paraphrased_text'] as String? ?? 
-                     response['paraphrase'] as String? ??
-                     response['result'] as String?;
-      if (result == null) {
-        throw Exception('Invalid response format');
-      }
+      final result = response['paraphrased_text'] as String;
       return result;
     } catch (e) {
       throw Exception('Failed to paraphrase text: $e');
