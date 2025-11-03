@@ -28,7 +28,7 @@ class _SentimentScreenState extends State<SentimentScreen> {
 
   void _analyzeSentiment(BuildContext context) {
     if (_formKey.currentState!.validate()) {
-      context.read<SentimentCubit>().analyzeSentiment(_textController.text);
+      context.read<SentimentCubit>().analyzeSentiment(text:_textController.text);
     }
   }
 

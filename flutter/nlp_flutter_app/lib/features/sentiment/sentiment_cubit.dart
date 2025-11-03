@@ -1,13 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lingua_sense/features/sentiment/sentiment_service.dart';
 import 'sentiment_state.dart';
 import 'sentiment_model.dart';
 
 /// Cubit for managing sentiment analysis state
 class SentimentCubit extends Cubit<SentimentState> {
+  final _sentimentService = SentimentService();
   SentimentCubit() : super(SentimentInitial());
 
   /// Analyzes sentiment of the given text
-  Future<void> analyzeSentiment(String text) async {
+  Future<void> analyzeSentiment({required String text}) async {
     if (text.trim().isEmpty) {
       emit(SentimentError('Please enter some text'));
       return;
@@ -16,18 +18,9 @@ class SentimentCubit extends Cubit<SentimentState> {
     emit(SentimentLoading());
 
     try {
-      // Simulate API call with dummy data
-      await Future.delayed(const Duration(seconds: 1));
+      final result = await _sentimentService.analyzeSentiment(text: text);
       
-      // TODO: Replace with actual API call
-      // final result = await _service.analyzeSentiment(text);
-      
-      // Dummy data for now
-      final result = SentimentResult(
-        sentiment: _getDummySentiment(text),
-        confidence: 0.85,
-      );
-      
+
       emit(SentimentSuccess(result));
     } catch (e) {
       emit(SentimentError(e.toString()));
@@ -35,14 +28,5 @@ class SentimentCubit extends Cubit<SentimentState> {
   }
 
   /// Get dummy sentiment based on text content
-  String _getDummySentiment(String text) {
-    final lowerText = text.toLowerCase();
-    if (lowerText.contains('love') || lowerText.contains('great') || lowerText.contains('amazing')) {
-      return 'positive';
-    } else if (lowerText.contains('hate') || lowerText.contains('bad') || lowerText.contains('terrible')) {
-      return 'negative';
-    }
-    return 'neutral';
-  }
 }
 
