@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/widgets/text_input_field.dart';
 import '../../core/widgets/primary_button.dart';
 import '../../core/widgets/result_card.dart';
+import '../../core/widgets/loading_indicator.dart';
 import '../../core/theme/app_colors.dart';
+import 'summarization_cubit.dart';
+import 'summarization_state.dart';
 
 /// Text Summarization screen
 class SummarizationScreen extends StatefulWidget {
@@ -14,8 +18,7 @@ class SummarizationScreen extends StatefulWidget {
 
 class _SummarizationScreenState extends State<SummarizationScreen> {
   final _textController = TextEditingController();
-  String? _summary;
-  double _ratio = 0.3;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
@@ -23,64 +26,108 @@ class _SummarizationScreenState extends State<SummarizationScreen> {
     super.dispose();
   }
 
-  void _summarize() {
-    // TODO: Implement summarization logic
-    setState(() {
-      _summary = 'Summarization feature coming soon!';
-    });
+  void _summarize(BuildContext context) {
+    if (_formKey.currentState!.validate()) {
+      context.read<SummarizationCubit>().summarize(
+        text: _textController.text,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Text Summarization'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+    return BlocProvider(
+      create: (context) => SummarizationCubit(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Text Summarization'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextInputField(
-              controller: _textController,
-              label: 'Original Text',
-              hint: 'Enter text to summarize...',
-              maxLines: 10,
-              maxLength: 2000,
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  'Enter text to summarize',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextInputField(
+                  controller: _textController,
+                  label: 'Original Text',
+                  hint: 'Enter text to summarize (minimum 100 characters)...',
+                  maxLines: 10,
+                  maxLength: 2000,
+                ),
+                const SizedBox(height: 24),
+                Builder(
+                  builder: (context) {
+                    return PrimaryButton(
+                      text: 'Summarize',
+                      gradient: AppColors.orangeGradient,
+                      onPressed: () => _summarize(context),
+                    );
+                  }
+                ),
+                const SizedBox(height: 32),
+                BlocBuilder<SummarizationCubit, SummarizationState>(
+                  builder: (context, state) {
+                    if (state is SummarizationLoading) {
+                      return const Center(child: LoadingIndicator());
+                    }
+
+                    if (state is SummarizationSuccess) {
+                      return Column(
+                        children: [
+                          ResultCard(
+                            title: 'Summary',
+                            icon: Icons.summarize,
+                            color: AppColors.primaryOrange,
+                            content: state.result.summary,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Original length: ${state.result.originalText.length} characters',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          Text(
+                            'Summary length: ${state.result.summary.length} characters',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+
+                    if (state is SummarizationError) {
+                      return ResultCard(
+                        title: 'Error',
+                        icon: Icons.error_outline,
+                        color: AppColors.primaryRed,
+                        content: state.message,
+                      );
+                    }
+
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Summary Ratio: ${(_ratio * 100).toInt()}%',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            Slider(
-              value: _ratio,
-              min: 0.1,
-              max: 0.5,
-              divisions: 4,
-              label: '${(_ratio * 100).toInt()}%',
-              onChanged: (value) => setState(() => _ratio = value),
-            ),
-            const SizedBox(height: 8),
-            PrimaryButton(
-              text: 'Summarize',
-              gradient: AppColors.orangeGradient,
-              onPressed: _summarize,
-            ),
-            if (_summary != null) ...[
-              const SizedBox(height: 24),
-              ResultCard(
-                title: 'Summary',
-                icon: Icons.summarize,
-                color: AppColors.primaryOrange,
-                content: _summary!,
-              ),
-            ],
-          ],
+          ),
         ),
       ),
     );
