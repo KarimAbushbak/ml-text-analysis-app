@@ -3,17 +3,14 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/history_item_model.dart';
 
-/// Service for managing history storage using SharedPreferences
 class HistoryStorageService {
   static const String _historyKey = 'analysis_history';
   static const int _maxItems = 100; // Limit storage
 
   final SharedPreferences _prefs;
 
-  // Constructor - requires SharedPreferences instance
   HistoryStorageService(this._prefs);
 
-  /// Factory method to create service with initialized SharedPreferences
   static Future<HistoryStorageService> create() async {
     final prefs = await SharedPreferences.getInstance();
     return HistoryStorageService(prefs);
