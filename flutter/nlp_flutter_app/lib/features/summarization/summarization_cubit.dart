@@ -2,12 +2,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'summarization_service.dart';
 import 'summarization_state.dart';
 import 'summarization_model.dart';
+import '../../core/services/history_storage_service.dart';
+import '../../core/models/history_item_model.dart';
 
 /// Cubit for managing text summarization state
 class SummarizationCubit extends Cubit<SummarizationState> {
   final _summarizationService = SummarizationService();
+  HistoryStorageService? _historyService;
   
-  SummarizationCubit() : super(SummarizationInitial());
+  SummarizationCubit() : super(SummarizationInitial()) {
+    _initHistoryService();
+  }
+
+  Future<void> _initHistoryService() async {
+    _historyService = await HistoryStorageService.create();
+  }
 
   /// Summarizes the given text
   Future<void> summarize({
@@ -34,6 +43,24 @@ class SummarizationCubit extends Cubit<SummarizationState> {
       );
       
       emit(SummarizationSuccess(result));
+
+      // Save to history
+      if (_historyService != null) {
+        await _historyService!.saveHistoryItem(
+          HistoryItemModel(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            featureType: 'summarization',
+            timestamp: DateTime.now(),
+            inputText: text,
+            result: {
+              'summary': summary,
+              'original_length': text.length,
+              'summary_length': summary.length,
+            },
+            metaData: null,
+          ),
+        );
+      }
     } catch (e) {
       emit(SummarizationError(e.toString()));
     }
