@@ -1,12 +1,21 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lingua_sense/features/sentiment/sentiment_service.dart';
 import 'sentiment_state.dart';
-import 'sentiment_model.dart';
+import '../../core/services/history_storage_service.dart';
+import '../../core/models/history_item_model.dart';
 
 /// Cubit for managing sentiment analysis state
 class SentimentCubit extends Cubit<SentimentState> {
   final _sentimentService = SentimentService();
-  SentimentCubit() : super(SentimentInitial());
+  HistoryStorageService? _historyService;
+
+  SentimentCubit() : super(SentimentInitial()) {
+    _initHistoryService();
+  }
+
+  Future<void> _initHistoryService() async {
+    _historyService = await HistoryStorageService.create();
+  }
 
   /// Analyzes sentiment of the given text
   Future<void> analyzeSentiment({required String text}) async {
@@ -22,6 +31,23 @@ class SentimentCubit extends Cubit<SentimentState> {
       
 
       emit(SentimentSuccess(result));
+
+      // Save to history
+      if (_historyService != null) {
+        await _historyService!.saveHistoryItem(
+          HistoryItemModel(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            featureType: 'sentiment',
+            timestamp: DateTime.now(),
+            inputText: text,
+            result: {
+              'sentiment': result.sentiment,
+              'confidence': result.confidence,
+            },
+            metaData: null,
+          ),
+        );
+      }
     } catch (e) {
       emit(SentimentError(e.toString()));
     }
