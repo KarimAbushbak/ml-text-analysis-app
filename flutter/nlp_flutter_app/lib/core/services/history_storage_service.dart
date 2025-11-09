@@ -33,7 +33,9 @@ class HistoryStorageService {
 
       // Convert each to HistoryItemModel
       final items = historyList
-          .map((json) => HistoryItemModel.fromJson(json as Map<String, dynamic>))
+          .map(
+            (json) => HistoryItemModel.fromJson(json as Map<String, dynamic>),
+          )
           .toList();
 
       // Sort by timestamp (newest first)
@@ -62,8 +64,9 @@ class HistoryStorageService {
       }
 
       // Convert all to JSON
-      final List<Map<String, dynamic>> jsonList =
-          items.map((item) => item.toJson()).toList();
+      final List<Map<String, dynamic>> jsonList = items
+          .map((item) => item.toJson())
+          .toList();
 
       final String jsonString = jsonEncode(jsonList);
 
@@ -85,8 +88,9 @@ class HistoryStorageService {
       items.removeWhere((item) => item.id == id);
 
       // Convert to JSON and save back
-      final List<Map<String, dynamic>> jsonList =
-          items.map((item) => item.toJson()).toList();
+      final List<Map<String, dynamic>> jsonList = items
+          .map((item) => item.toJson())
+          .toList();
 
       final String jsonString = jsonEncode(jsonList);
 
@@ -128,4 +132,3 @@ class HistoryStorageService {
         .toList();
   }
 }
-

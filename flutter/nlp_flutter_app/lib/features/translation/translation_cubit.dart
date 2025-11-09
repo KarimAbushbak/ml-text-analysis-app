@@ -4,6 +4,7 @@ import 'package:lingua_sense/features/translation/translation_service.dart';
 import 'package:meta/meta.dart';
 import '../../core/services/history_storage_service.dart';
 import '../../core/models/history_item_model.dart';
+import '../../core/exceptions/api_exceptions.dart';
 
 part 'translation_state.dart';
 
@@ -52,8 +53,18 @@ class TranslationCubit extends Cubit<TranslationState> {
           ),
         );
       }
+    } on NetworkException catch (e) {
+      emit(TranslationFailure(e.message));
+    } on TimeoutException catch (e) {
+      emit(TranslationFailure(e.message));
+    } on BadRequestException catch (e) {
+      emit(TranslationFailure(e.message));
+    } on ServerException catch (e) {
+      emit(TranslationFailure('Server error: ${e.message}'));
+    } on ApiException catch (e) {
+      emit(TranslationFailure(e.message));
     } catch (e) {
-      emit(TranslationFailure(e.toString()));
+      emit(TranslationFailure('An unexpected error occurred. Please try again.'));
     }
   }
 }

@@ -1,4 +1,5 @@
 import '../../core/utils/api_client.dart';
+import '../../core/exceptions/api_exceptions.dart';
 
 /// Service for paraphrasing API calls
 class ParaphrasingService {
@@ -13,8 +14,14 @@ class ParaphrasingService {
       // ParaphraseResponse model - check the actual field name in your backend
       final result = response['paraphrased_text'] as String;
       return result;
+    } on NetworkException {
+      rethrow; // Pass network exceptions up to be handled by UI
+    } on TimeoutException {
+      rethrow; // Pass timeout exceptions up to be handled by UI
+    } on ServerException {
+      rethrow; // Pass server exceptions up to be handled by UI
     } catch (e) {
-      throw Exception('Failed to paraphrase text: $e');
+      throw UnknownException('Failed to paraphrase text: $e');
     }
   }
 }

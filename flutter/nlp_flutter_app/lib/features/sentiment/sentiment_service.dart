@@ -1,6 +1,7 @@
 import 'package:lingua_sense/features/sentiment/sentiment_model.dart';
 
 import '../../core/utils/api_client.dart';
+import '../../core/exceptions/api_exceptions.dart';
 
 /// Service for sentiment analysis API calls
 class SentimentService {
@@ -15,8 +16,14 @@ class SentimentService {
         sentiment: response['sentiment'] as String,
         confidence: (response['confidence'] as num).toDouble(),
       );
+    } on NetworkException {
+      rethrow; // Pass network exceptions up to be handled by UI
+    } on TimeoutException {
+      rethrow; // Pass timeout exceptions up to be handled by UI
+    } on ServerException {
+      rethrow; // Pass server exceptions up to be handled by UI
     } catch (e) {
-      throw Exception('Failed to analyze sentiment: $e');
+      throw UnknownException('Failed to analyze sentiment: $e');
     }
   }
 }
