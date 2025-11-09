@@ -1,7 +1,7 @@
 """
 API routes for the NLP application
 """
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from lib.models import (
     ParaphraseResponse,
     SummarizationResponse,
@@ -14,6 +14,7 @@ from lib.models import (
     BatchSentimentResponse
 )
 from lib.services import ParaphraseService, SentimentService, NERService, SummarizationService, TranslationService
+from lib.rate_limiter import limiter
 
 # Create router
 router = APIRouter()
@@ -48,14 +49,16 @@ def get_summarization_service() -> SummarizationService:
 
 # Health check endpoints
 @router.get("/")
-async def root():
+@limiter.limit("60/minute")
+async def root(request: Request):
     """Basic API status endpoint"""
-    return {"message": "NLP Analysis API is running!"}
+    return {"message": "NLP Analysis API is running!", "version": "2.0.0"}
 
 
 @router.get("/health")
-async def health_check():
-    """Detailed health check endpoint"""
+@limiter.limit("30/minute")
+async def health_check(request: Request):
+    """Detailed health check endpoint with model status"""
     from main import sentiment_model, ner_model, paraphrase_model, summarization_model
     return {
         "status": "healthy",
@@ -70,12 +73,15 @@ async def health_check():
 
 # Sentiment analysis endpoints
 @router.post("/analyze", response_model=SentimentResponse)
+@limiter.limit("20/minute")
 async def analyze_sentiment(
+    request: Request,
     input_data: TextInput,
     service: SentimentService = Depends(get_sentiment_service)
 ):
     """
     Analyze the sentiment of the provided text
+    Rate limited to 20 requests per minute per IP
     """
     try:
         return service.analyze_sentiment(input_data.text)
@@ -84,12 +90,15 @@ async def analyze_sentiment(
 
 
 @router.post("/analyze-batch", response_model=BatchSentimentResponse)
+@limiter.limit("10/minute")
 async def analyze_batch_sentiment(
+    request: Request,
     input_data: BatchTextInput,
     service: SentimentService = Depends(get_sentiment_service)
 ):
     """
     Analyze sentiment for multiple texts at once
+    Rate limited to 10 requests per minute (more expensive operation)
     """
     try:
         results = service.analyze_batch(input_data.texts)
@@ -100,12 +109,15 @@ async def analyze_batch_sentiment(
 
 # NER endpoints
 @router.post("/ner", response_model=NERResponse)
+@limiter.limit("15/minute")
 async def extract_entities(
+    request: Request,
     input_data: TextInput,
     service: NERService = Depends(get_ner_service)
 ):
     """
     Extract named entities from the provided text
+    Rate limited to 15 requests per minute (compute-intensive)
     """
     try:
         return service.extract_entities(input_data.text)
@@ -115,12 +127,15 @@ async def extract_entities(
 
 # Translation endpoints
 @router.post("/translate", response_model=TranslationResponse)
+@limiter.limit("15/minute")
 async def translate_text(
+    request: Request,
     input_data: TranslationInput,
     service: TranslationService = Depends(get_translation_service)
 ):
     """
     Translate text from source language to target language
+    Rate limited to 15 requests per minute (loads models dynamically)
     """
     try:
         translated_text = service.translate(
@@ -136,12 +151,15 @@ async def translate_text(
 
 # Paraphrasing endpoints
 @router.post("/paraphrase", response_model=ParaphraseResponse)
+@limiter.limit("15/minute")
 async def paraphrase_text(
+    request: Request,
     input_data: TextInput,
     service: ParaphraseService = Depends(get_paraphrase_service)
 ):
     """
     Paraphrase the provided text
+    Rate limited to 15 requests per minute
     """
     try:
         return service.paraphrase(input_data.text)
@@ -151,12 +169,15 @@ async def paraphrase_text(
     
 # Summarization endpoints
 @router.post("/summarize", response_model=SummarizationResponse)
+@limiter.limit("15/minute")
 async def summarize_text(
+    request: Request,
     input_data: TextInput,
     service: SummarizationService = Depends(get_summarization_service)
 ):
     """
     Summarize the provided text
+    Rate limited to 15 requests per minute
     """
     try:
         return service.summarize(input_data.text)

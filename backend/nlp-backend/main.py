@@ -5,9 +5,17 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import logging
+import os
+from dotenv import load_dotenv
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Import our modules
 from lib.routes import router
+from lib.rate_limiter import limiter, rate_limit_handler
 from lib.providers.model_providers import (
     SentimentModelProvider,
     NERModelProvider,
@@ -21,6 +29,13 @@ from lib.services import ParaphraseService, SentimentService, NERService, Transl
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Get configuration from environment variables
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:8000").split(",")
+ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
+
+logger.info(f"Starting application in {ENVIRONMENT} mode")
+logger.info(f"Allowed CORS origins: {ALLOWED_ORIGINS}")
+
 # Initialize FastAPI app
 app = FastAPI(
     title="NLP Analysis API",
@@ -28,13 +43,20 @@ app = FastAPI(
     version="2.0.0"
 )
 
+# Add rate limiter to app state
+app.state.limiter = limiter
+
+# Add custom rate limit exception handler
+app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
+
 # Add CORS middleware to allow requests from Flutter app
+# SECURITY: Only allow requests from specified origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify your Flutter app's origin
+    allow_origins=ALLOWED_ORIGINS,  # Controlled by environment variable
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST"],  # Only allow needed HTTP methods
+    allow_headers=["Content-Type", "Authorization", "X-API-Key"],  # Only allow needed headers
 )
 
 # Initialize model providers

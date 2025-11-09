@@ -1,25 +1,80 @@
 """
 Pydantic models for request and response validation
 """
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from typing import Optional, List
 
 
 class TextInput(BaseModel):
     """Input model for text-based operations"""
-    text: str = Field(..., min_length=1, description="The text to process")
+    text: str = Field(
+        ..., 
+        min_length=1, 
+        max_length=5000,
+        description="The text to process (max 5000 characters)"
+    )
+    
+    @validator('text')
+    def validate_text(cls, v):
+        """Validate and sanitize text input"""
+        # Strip whitespace
+        v = v.strip()
+        
+        # Check if empty after stripping
+        if not v:
+            raise ValueError("Text cannot be empty or only whitespace")
+            
+        return v
 
 
 class BatchTextInput(BaseModel):
     """Input model for batch text processing"""
-    texts: List[str] = Field(..., min_items=1, description="List of texts to process")
+    texts: List[str] = Field(
+        ..., 
+        min_items=1, 
+        max_items=100,
+        description="List of texts to process (max 100 items)"
+    )
+    
+    @validator('texts')
+    def validate_texts(cls, v):
+        """Validate each text in the batch"""
+        for text in v:
+            if not text or not text.strip():
+                raise ValueError("All texts must be non-empty")
+            if len(text) > 5000:
+                raise ValueError("Each text must be under 5000 characters")
+        return v
 
 
 class TranslationInput(BaseModel):
     """Input model for translation"""
-    text: str = Field(..., min_length=1, description="The text to translate")
-    source_lang: str = Field(default="en", description="Source language code")
-    target_lang: str = Field(default="ar", description="Target language code")
+    text: str = Field(
+        ..., 
+        min_length=1, 
+        max_length=3000,
+        description="The text to translate (max 3000 characters)"
+    )
+    source_lang: str = Field(
+        default="en", 
+        min_length=2, 
+        max_length=5,
+        description="Source language code (e.g., 'en', 'es', 'fr')"
+    )
+    target_lang: str = Field(
+        default="ar", 
+        min_length=2, 
+        max_length=5,
+        description="Target language code (e.g., 'en', 'es', 'fr')"
+    )
+    
+    @validator('text')
+    def validate_text(cls, v):
+        """Validate and sanitize translation text"""
+        v = v.strip()
+        if not v:
+            raise ValueError("Text cannot be empty")
+        return v
 
 
 class SentimentResponse(BaseModel):
