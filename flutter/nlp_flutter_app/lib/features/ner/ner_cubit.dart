@@ -3,6 +3,7 @@ import 'ner_service.dart';
 import 'ner_state.dart';
 import '../../core/services/history_storage_service.dart';
 import '../../core/models/history_item_model.dart';
+import '../../core/exceptions/api_exceptions.dart';
 
 /// Cubit for managing Named Entity Recognition state
 class NERCubit extends Cubit<NERState> {
@@ -46,8 +47,18 @@ class NERCubit extends Cubit<NERState> {
           ),
         );
       }
+    } on NetworkException catch (e) {
+      emit(NERError(e.message));
+    } on TimeoutException catch (e) {
+      emit(NERError(e.message));
+    } on BadRequestException catch (e) {
+      emit(NERError(e.message));
+    } on ServerException catch (e) {
+      emit(NERError('Server error: ${e.message}'));
+    } on ApiException catch (e) {
+      emit(NERError(e.message));
     } catch (e) {
-      emit(NERError(e.toString()));
+      emit(NERError('An unexpected error occurred. Please try again.'));
     }
   }
 }

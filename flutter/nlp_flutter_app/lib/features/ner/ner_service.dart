@@ -1,4 +1,5 @@
 import '../../core/utils/api_client.dart';
+import '../../core/exceptions/api_exceptions.dart';
 import 'ner_model.dart';
 
 class NERService {
@@ -14,8 +15,14 @@ class NERService {
       return entitiesList
           .map((entity) => NerResult.fromJson(entity as Map<String, dynamic>))
           .toList();
+    } on NetworkException {
+      rethrow; // Pass network exceptions up to be handled by UI
+    } on TimeoutException {
+      rethrow; // Pass timeout exceptions up to be handled by UI
+    } on ServerException {
+      rethrow; // Pass server exceptions up to be handled by UI
     } catch (e) {
-      throw Exception('Failed to recognize entities: $e');
+      throw UnknownException('Failed to recognize entities: $e');
     }
   }
 }

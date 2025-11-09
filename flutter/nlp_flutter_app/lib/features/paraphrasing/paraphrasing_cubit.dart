@@ -4,6 +4,7 @@ import 'paraphrasing_state.dart';
 import 'paraphrasing_model.dart';
 import '../../core/services/history_storage_service.dart';
 import '../../core/models/history_item_model.dart';
+import '../../core/exceptions/api_exceptions.dart';
 
 /// Cubit for managing paraphrasing state
 class ParaphrasingCubit extends Cubit<ParaphrasingState> {
@@ -51,8 +52,18 @@ class ParaphrasingCubit extends Cubit<ParaphrasingState> {
           ),
         );
       }
+    } on NetworkException catch (e) {
+      emit(ParaphrasingError(e.message));
+    } on TimeoutException catch (e) {
+      emit(ParaphrasingError(e.message));
+    } on BadRequestException catch (e) {
+      emit(ParaphrasingError(e.message));
+    } on ServerException catch (e) {
+      emit(ParaphrasingError('Server error: ${e.message}'));
+    } on ApiException catch (e) {
+      emit(ParaphrasingError(e.message));
     } catch (e) {
-      emit(ParaphrasingError(e.toString()));
+      emit(ParaphrasingError('An unexpected error occurred. Please try again.'));
     }
   }
 }

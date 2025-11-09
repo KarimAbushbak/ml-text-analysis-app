@@ -4,6 +4,7 @@ import 'summarization_state.dart';
 import 'summarization_model.dart';
 import '../../core/services/history_storage_service.dart';
 import '../../core/models/history_item_model.dart';
+import '../../core/exceptions/api_exceptions.dart';
 
 /// Cubit for managing text summarization state
 class SummarizationCubit extends Cubit<SummarizationState> {
@@ -61,8 +62,18 @@ class SummarizationCubit extends Cubit<SummarizationState> {
           ),
         );
       }
+    } on NetworkException catch (e) {
+      emit(SummarizationError(e.message));
+    } on TimeoutException catch (e) {
+      emit(SummarizationError(e.message));
+    } on BadRequestException catch (e) {
+      emit(SummarizationError(e.message));
+    } on ServerException catch (e) {
+      emit(SummarizationError('Server error: ${e.message}'));
+    } on ApiException catch (e) {
+      emit(SummarizationError(e.message));
     } catch (e) {
-      emit(SummarizationError(e.toString()));
+      emit(SummarizationError('An unexpected error occurred. Please try again.'));
     }
   }
 }

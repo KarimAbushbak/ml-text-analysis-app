@@ -1,8 +1,9 @@
 import '../../core/utils/api_client.dart';
-import 'translation_model.dart'; // Add this
+import '../../core/exceptions/api_exceptions.dart';
+import 'translation_model.dart';
 
 class TranslationService {
-  Future<TranslationResult> translate({ // Change return type
+  Future<TranslationResult> translate({
     required String text,
     required String sourceLang,
     required String targetLang,
@@ -23,8 +24,14 @@ class TranslationService {
         sourceLang: sourceLang,
         targetLang: targetLang,
       );
+    } on NetworkException {
+      rethrow; // Pass network exceptions up to be handled by UI
+    } on TimeoutException {
+      rethrow; // Pass timeout exceptions up to be handled by UI
+    } on ServerException {
+      rethrow; // Pass server exceptions up to be handled by UI
     } catch (e) {
-      throw Exception('Failed to translate text: $e');
+      throw UnknownException('Failed to translate text: $e');
     }
   }
 }

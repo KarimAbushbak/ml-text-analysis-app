@@ -3,17 +3,14 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/history_item_model.dart';
 
-/// Service for managing history storage using SharedPreferences
 class HistoryStorageService {
   static const String _historyKey = 'analysis_history';
   static const int _maxItems = 100; // Limit storage
 
   final SharedPreferences _prefs;
 
-  // Constructor - requires SharedPreferences instance
   HistoryStorageService(this._prefs);
 
-  /// Factory method to create service with initialized SharedPreferences
   static Future<HistoryStorageService> create() async {
     final prefs = await SharedPreferences.getInstance();
     return HistoryStorageService(prefs);
@@ -36,7 +33,9 @@ class HistoryStorageService {
 
       // Convert each to HistoryItemModel
       final items = historyList
-          .map((json) => HistoryItemModel.fromJson(json as Map<String, dynamic>))
+          .map(
+            (json) => HistoryItemModel.fromJson(json as Map<String, dynamic>),
+          )
           .toList();
 
       // Sort by timestamp (newest first)
@@ -65,8 +64,9 @@ class HistoryStorageService {
       }
 
       // Convert all to JSON
-      final List<Map<String, dynamic>> jsonList =
-          items.map((item) => item.toJson()).toList();
+      final List<Map<String, dynamic>> jsonList = items
+          .map((item) => item.toJson())
+          .toList();
 
       final String jsonString = jsonEncode(jsonList);
 
@@ -88,8 +88,9 @@ class HistoryStorageService {
       items.removeWhere((item) => item.id == id);
 
       // Convert to JSON and save back
-      final List<Map<String, dynamic>> jsonList =
-          items.map((item) => item.toJson()).toList();
+      final List<Map<String, dynamic>> jsonList = items
+          .map((item) => item.toJson())
+          .toList();
 
       final String jsonString = jsonEncode(jsonList);
 
@@ -131,4 +132,3 @@ class HistoryStorageService {
         .toList();
   }
 }
-
