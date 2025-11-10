@@ -17,7 +17,7 @@ def run_tests(args=None):
         python run_tests.py -k test_name # Run specific test
         python run_tests.py --markers    # Show available markers
     """
-    cmd = ["pytest"]
+    cmd = [sys.executable, "-m", "pytest"]  # Use python -m pytest for Windows compatibility
     
     if args:
         cmd.extend(args)
