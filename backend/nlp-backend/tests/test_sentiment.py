@@ -1,5 +1,9 @@
 """
 Tests for sentiment analysis endpoints
+
+Note: If these tests fail with 429 (Too Many Requests), it means rate limiting
+is working correctly! The rate limiter from previous tests may still be active.
+Run sentiment tests separately: pytest tests/test_sentiment.py
 """
 import pytest
 

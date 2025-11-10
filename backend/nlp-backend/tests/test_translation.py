@@ -100,6 +100,7 @@ def test_translation_invalid_language_code(client):
         }
     )
     
-    # Should return error (either 400 or 500 depending on validation)
-    assert response.status_code in [400, 500]
+    # Should return 422 (validation error) or 400/500 (other error)
+    # 422 is the correct response for invalid input
+    assert response.status_code in [400, 422, 500]
 

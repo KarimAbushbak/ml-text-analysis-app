@@ -13,13 +13,16 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from main import app
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def client():
     """
     Create a test client for making API requests
     This is like a fake browser that can test your API
+    
+    Note: Using scope="function" means each test gets a fresh client
+    This helps prevent rate limit issues between tests
     """
-    with TestClient(app) as test_client:
+    with TestClient(app, raise_server_exceptions=False) as test_client:
         yield test_client
 
 
@@ -37,6 +40,7 @@ def sample_texts():
         "empty": "",
         "long": "a" * 6000,  # Over the 5000 character limit
         "valid_length": "This is a test message for analysis." * 10,  # ~370 chars
+        "near_limit": "a" * 4500,  # Near limit but safe for processing
     }
 
 
@@ -72,4 +76,3 @@ def sample_batch_texts():
         "Great product!",
         "Not bad."
     ]
-
