@@ -1,0 +1,25 @@
+# Tell Railway to ignore these files/folders
+
+# Tests
+tests/
+*.pyc
+__pycache__/
+.pytest_cache/
+
+# Environment
+.env
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# Documentation
+*.md
+!README.md
+
+# Coverage
+htmlcov/
+.coverage
+
