@@ -33,9 +33,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       future: HistoryStorageService.create(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const Scaffold(
-            body: Center(child: LoadingIndicator()),
-          );
+          return const Scaffold(body: Center(child: LoadingIndicator()));
         }
 
         return BlocProvider(
@@ -48,58 +46,46 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 onPressed: () => Navigator.of(context).pop(),
               ),
               actions: [
-                // Wrap actions in Builder to get correct context
-                Builder(
-                  builder: (context) => PopupMenuButton<String?>(
-                    icon: Icon(
-                      Icons.filter_list,
-                      color: _selectedFilter != null ? AppColors.primaryBlue : null,
-                    ),
-                    tooltip: 'Filter by feature',
-                    onSelected: (value) {
-                      setState(() {
-                        _selectedFilter = value;
-                      });
-                      context.read<HistoryCubit>().filterByType(value);
-                    },
-                    itemBuilder: (context) => [
-                      PopupMenuItem<String?>(
-                        value: null,
-                        child: Row(
-                          children: [
-                            Icon(
-                              _selectedFilter == null
-                                  ? Icons.check_circle
-                                  : Icons.circle_outlined,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            const Text('All'),
-                          ],
+                PopupMenuButton<String?>(
+                  icon: Icon(
+                    Icons.filter_list,
+                    color: _selectedFilter != null
+                        ? AppColors.primaryBlue
+                        : null,
+                  ),
+                  tooltip: 'Filter',
+                  onSelected: (value) {
+                    setState(() => _selectedFilter = value);
+                    context.read<HistoryCubit>().filterByType(value);
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem<String?>(
+                      value: null,
+                      child: Text(
+                        'All',
+                        style: TextStyle(
+                          fontWeight: _selectedFilter == null 
+                              ? FontWeight.bold 
+                              : FontWeight.normal,
                         ),
                       ),
-                      const PopupMenuDivider(),
-                      ..._filterOptions.entries.map((entry) {
-                        return PopupMenuItem<String>(
-                          value: entry.key,
-                          child: Row(
-                            children: [
-                              Icon(
-                                _selectedFilter == entry.key
-                                    ? Icons.check_circle
-                                    : Icons.circle_outlined,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(entry.value),
-                            ],
+                    ),
+                    const PopupMenuDivider(),
+                    ..._filterOptions.entries.map((entry) {
+                      return PopupMenuItem<String>(
+                        value: entry.key,
+                        child: Text(
+                          entry.value,
+                          style: TextStyle(
+                            fontWeight: _selectedFilter == entry.key
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                           ),
-                        );
-                      }),
-                    ],
-                  ),
+                        ),
+                      );
+                    }),
+                  ],
                 ),
-                // Clear all button
                 BlocBuilder<HistoryCubit, HistoryState>(
                   builder: (context, state) {
                     if (state is HistoryLoaded && state.items.isNotEmpty) {
@@ -158,7 +144,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   setState(() {
                                     _selectedFilter = null;
                                   });
-                                  context.read<HistoryCubit>().filterByType(null);
+                                  context.read<HistoryCubit>().filterByType(
+                                    null,
+                                  );
                                 },
                                 child: const Text('Clear filter'),
                               ),
@@ -186,7 +174,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 context.read<HistoryCubit>().deleteItem(item.id);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text('History item deleted'),
+                                    content: Text('Deleted'),
                                     duration: Duration(seconds: 2),
                                   ),
                                 );
@@ -254,18 +242,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
             Icon(
               Icons.history,
               size: 80,
-              color: Theme.of(context)
-                  .textTheme
-                  .bodySmall
-                  ?.color
-                  ?.withValues(alpha: 0.3),
+              color: Theme.of(
+                context,
+              ).textTheme.bodySmall?.color?.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 16),
             Text(
               _selectedFilter != null ? 'No items found' : 'No history yet',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
             Text(
@@ -273,8 +259,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   ? 'No ${_filterOptions[_selectedFilter]} history found'
                   : 'Your past analyses will appear here',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).textTheme.bodySmall?.color,
-                  ),
+                color: Theme.of(context).textTheme.bodySmall?.color,
+              ),
               textAlign: TextAlign.center,
             ),
             if (_selectedFilter != null) ...[
@@ -298,34 +284,32 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Future<void> _showClearAllDialog(BuildContext context) async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text('Clear All History'),
-          content: const Text(
-            'Are you sure you want to delete all history? This action cannot be undone.',
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Clear All History'),
+        content: const Text(
+          'Delete all history? This cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancel'),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Cancel'),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.primaryRed,
             ),
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(true),
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.primaryRed,
-              ),
-              child: const Text('Clear All'),
-            ),
-          ],
-        );
-      },
+            child: const Text('Clear All'),
+          ),
+        ],
+      ),
     );
 
     if (confirmed == true && context.mounted) {
       context.read<HistoryCubit>().clearAll();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('All history cleared'),
+          content: Text('History cleared'),
           duration: Duration(seconds: 2),
         ),
       );

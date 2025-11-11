@@ -50,33 +50,7 @@ class HistoryListItem extends StatelessWidget {
           size: 28,
         ),
       ),
-      confirmDismiss: (direction) async {
-        return await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Delete History Item'),
-              content: const Text('Are you sure you want to delete this item?'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  style: TextButton.styleFrom(
-                    foregroundColor: AppColors.primaryRed,
-                  ),
-                  child: const Text('Delete'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-      onDismissed: (direction) {
-        onDelete();
-      },
+      onDismissed: (direction) => onDelete(),
       child: Card(
         margin: const EdgeInsets.only(bottom: 12),
         elevation: 2,
