@@ -77,16 +77,37 @@ summarization_service = SummarizationService(summarization_model)
 def load_models():
     """Load all models on startup"""
     logger.info("Loading models...")
+    
+    # Load essential models (sentiment and NER)
     try:
         sentiment_model.load_model()
-        ner_model.load_model()
-        paraphrase_model.load_model()
-        summarization_model.load_model()
-        # Translation models are loaded on-demand based on language pairs
-        logger.info("All models loaded successfully!")
+        logger.info("✓ Sentiment model loaded")
     except Exception as e:
-        logger.error(f"Error loading models: {e}")
+        logger.error(f"✗ Error loading sentiment model: {e}")
         raise
+    
+    try:
+        ner_model.load_model()
+        logger.info("✓ NER model loaded")
+    except Exception as e:
+        logger.error(f"✗ Error loading NER model: {e}")
+        raise
+    
+    # Load optional models (don't fail startup if these fail)
+    try:
+        paraphrase_model.load_model()
+        logger.info("✓ Paraphrase model loaded")
+    except Exception as e:
+        logger.warning(f"⚠ Paraphrase model failed to load (will load on-demand): {e}")
+    
+    try:
+        summarization_model.load_model()
+        logger.info("✓ Summarization model loaded")
+    except Exception as e:
+        logger.warning(f"⚠ Summarization model failed to load (will load on-demand): {e}")
+    
+    # Translation models are loaded on-demand based on language pairs
+    logger.info("Core models loaded successfully!")
 
 
 # Load models on startup

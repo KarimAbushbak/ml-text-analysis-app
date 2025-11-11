@@ -141,7 +141,8 @@ class ParaphraseModelProvider(ModelProvider):
     def predict(self, text: str):
         """Perform paraphrasing on text"""
         if not self.pipeline:
-            raise ValueError("Model not loaded")
+            # Load on-demand if not loaded at startup
+            self.load_model()
         return self.pipeline(text)
 
 class SummarizationModelProvider(ModelProvider):
@@ -168,5 +169,6 @@ class SummarizationModelProvider(ModelProvider):
     def predict(self, text: str):
         """Perform summarization on text"""
         if not self.pipeline:
-            raise ValueError("Model not loaded")
+            # Load on-demand if not loaded at startup
+            self.load_model()
         return self.pipeline(text)
