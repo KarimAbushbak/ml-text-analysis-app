@@ -1,0 +1,10 @@
+# Railway Configuration
+# Deploy only the Python backend, not the Flutter app
+
+[build]
+# Set working directory to backend
+workdir = "backend/nlp-backend"
+
+[deploy]
+# Start command relative to workdir
+startCommand = "python main.py"
