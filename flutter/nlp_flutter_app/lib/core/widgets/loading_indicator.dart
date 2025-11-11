@@ -9,7 +9,7 @@ class LoadingIndicator extends StatefulWidget {
   const LoadingIndicator({
     super.key,
     this.color,
-    this.size = 40,
+    this.size = 50,
   });
 
   @override
