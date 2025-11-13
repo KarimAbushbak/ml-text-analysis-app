@@ -59,7 +59,6 @@ class AppStrings {
   static const String to = 'To';
   static const String sourceText = 'Source Text';
   static const String enterTextToTranslate = 'Enter text to translate...';
-  static const String translation = 'Translation';
 
   // Paraphrasing Screen
   static const String paraphrasingTitle = 'Paraphrasing';

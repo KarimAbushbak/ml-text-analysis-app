@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/constants/app_dimensions.dart';
+import '../../core/theme/theme_provider.dart';
 
 /// Settings screen
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
-  bool _isDarkMode = false;
-
-  @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.isDarkMode;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(AppStrings.settingsTitle),
@@ -28,10 +26,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           SwitchListTile(
             title: const Text(AppStrings.darkMode),
             subtitle: const Text(AppStrings.toggleDarkTheme),
-            value: _isDarkMode,
+            value: isDarkMode,
             onChanged: (value) {
-              setState(() => _isDarkMode = value);
-              // TODO: Implement theme toggle
+              themeProvider.toggleTheme();
             },
           ),
           const Divider(),
