@@ -1,5 +1,6 @@
 import '../../core/utils/api_client.dart';
 import '../../core/exceptions/api_exceptions.dart';
+import '../../core/constants/api_constants.dart';
 
 /// Service for paraphrasing API calls
 class ParaphrasingService {
@@ -7,7 +8,7 @@ class ParaphrasingService {
   Future<String> paraphrase(String text) async {
     try {
       final response = await ApiClient.post(
-        endpoint: '/paraphrase',
+        endpoint: ApiConstants.endpointParaphrase,
         body: {'text': text},
       );
       

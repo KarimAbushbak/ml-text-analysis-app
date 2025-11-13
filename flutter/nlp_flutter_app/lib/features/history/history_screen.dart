@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/services/history_storage_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/loading_indicator.dart';
+import '../../core/constants/app_strings.dart';
+import '../../core/constants/app_dimensions.dart';
 import 'history_cubit.dart';
 import 'history_state.dart';
 import 'history_detail_screen.dart';
@@ -20,11 +22,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
   String? _selectedFilter;
 
   final Map<String, String> _filterOptions = {
-    'translation': 'Translation',
-    'sentiment': 'Sentiment',
-    'paraphrasing': 'Paraphrasing',
-    'ner': 'NER',
-    'summarization': 'Summarization',
+    'translation': AppStrings.filterTranslation,
+    'sentiment': AppStrings.filterSentiment,
+    'paraphrasing': AppStrings.filterParaphrasing,
+    'ner': AppStrings.filterNER,
+    'summarization': AppStrings.filterSummarization,
   };
 
   @override
@@ -40,7 +42,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           create: (context) => HistoryCubit(snapshot.data!)..loadHistory(),
           child: Scaffold(
             appBar: AppBar(
-              title: const Text('History'),
+              title: const Text(AppStrings.historyTitle),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () => Navigator.of(context).pop(),
@@ -53,7 +55,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         ? AppColors.primaryBlue
                         : null,
                   ),
-                  tooltip: 'Filter',
+                  tooltip: AppStrings.filter,
                   onSelected: (value) {
                     setState(() => _selectedFilter = value);
                     context.read<HistoryCubit>().filterByType(value);
@@ -62,10 +64,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     PopupMenuItem<String?>(
                       value: null,
                       child: Text(
-                        'All',
+                        AppStrings.all,
                         style: TextStyle(
                           fontWeight: _selectedFilter == null 
-                              ? FontWeight.bold 
+                              ? AppDimensions.fontWeightBold 
                               : FontWeight.normal,
                         ),
                       ),
@@ -78,7 +80,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           entry.value,
                           style: TextStyle(
                             fontWeight: _selectedFilter == entry.key
-                                ? FontWeight.bold
+                                ? AppDimensions.fontWeightBold
                                 : FontWeight.normal,
                           ),
                         ),
@@ -91,7 +93,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     if (state is HistoryLoaded && state.items.isNotEmpty) {
                       return IconButton(
                         icon: const Icon(Icons.delete_sweep),
-                        tooltip: 'Clear all',
+                        tooltip: AppStrings.clearAllTooltip,
                         onPressed: () => _showClearAllDialog(context),
                       );
                     }
@@ -131,11 +133,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Showing ${_filterOptions[state.filterType]} only',
+                                '${AppStrings.showingFilterOnly} ${_filterOptions[state.filterType]} ${AppStrings.only}',
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: AppDimensions.fontSize14,
                                   color: AppColors.primaryBlue,
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: AppDimensions.fontWeight500,
                                 ),
                               ),
                               const Spacer(),
@@ -148,7 +150,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                     null,
                                   );
                                 },
-                                child: const Text('Clear filter'),
+                                child: const Text(AppStrings.clearFilter),
                               ),
                             ],
                           ),
@@ -173,9 +175,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               onDelete: () {
                                 context.read<HistoryCubit>().deleteItem(item.id);
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Deleted'),
-                                    duration: Duration(seconds: 2),
+                                  SnackBar(
+                                    content: const Text(AppStrings.deleted),
+                                    duration: AppDimensions.snackbarDuration,
                                   ),
                                 );
                               },
@@ -201,21 +203,21 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'Error Loading History',
+                            AppStrings.errorLoadingHistory,
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: AppDimensions.spacing8),
                           Text(
                             state.message,
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: AppDimensions.spacing24),
                           ElevatedButton(
                             onPressed: () {
                               context.read<HistoryCubit>().loadHistory();
                             },
-                            child: const Text('Retry'),
+                            child: const Text(AppStrings.retry),
                           ),
                         ],
                       ),
@@ -248,23 +250,23 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              _selectedFilter != null ? 'No items found' : 'No history yet',
+              _selectedFilter != null ? AppStrings.noItemsFound : AppStrings.noHistoryYet,
               style: Theme.of(
                 context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+              ).textTheme.titleLarge?.copyWith(fontWeight: AppDimensions.fontWeight600),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppDimensions.spacing8),
             Text(
               _selectedFilter != null
-                  ? 'No ${_filterOptions[_selectedFilter]} history found'
-                  : 'Your past analyses will appear here',
+                  ? 'No ${_filterOptions[_selectedFilter]} ${AppStrings.historyTitle.toLowerCase()} found'
+                  : AppStrings.pastAnalysesWillAppear,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).textTheme.bodySmall?.color,
               ),
               textAlign: TextAlign.center,
             ),
             if (_selectedFilter != null) ...[
-              const SizedBox(height: 16),
+              const SizedBox(height: AppDimensions.spacing16),
               TextButton(
                 onPressed: () {
                   setState(() {
@@ -272,7 +274,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   });
                   context.read<HistoryCubit>().filterByType(null);
                 },
-                child: const Text('Clear filter'),
+                child: const Text(AppStrings.clearFilter),
               ),
             ],
           ],
@@ -285,21 +287,21 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Clear All History'),
+        title: const Text(AppStrings.clearAllHistory),
         content: const Text(
-          'Delete all history? This cannot be undone.',
+          AppStrings.deleteAllHistoryConfirm,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancel'),
+            child: const Text(AppStrings.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, true),
             style: TextButton.styleFrom(
               foregroundColor: AppColors.primaryRed,
             ),
-            child: const Text('Clear All'),
+            child: const Text(AppStrings.clearAll),
           ),
         ],
       ),
@@ -308,9 +310,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
     if (confirmed == true && context.mounted) {
       context.read<HistoryCubit>().clearAll();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('History cleared'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: const Text(AppStrings.historyCleared),
+          duration: AppDimensions.snackbarDuration,
         ),
       );
     }

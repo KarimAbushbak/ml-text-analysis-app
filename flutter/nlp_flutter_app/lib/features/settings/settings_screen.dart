@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../core/constants/app_strings.dart';
+import '../../core/constants/app_dimensions.dart';
 
 /// Settings screen
 class SettingsScreen extends StatefulWidget {
@@ -15,7 +17,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: const Text(AppStrings.settingsTitle),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
@@ -24,8 +26,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         children: [
           SwitchListTile(
-            title: const Text('Dark Mode'),
-            subtitle: const Text('Toggle dark theme'),
+            title: const Text(AppStrings.darkMode),
+            subtitle: const Text(AppStrings.toggleDarkTheme),
             value: _isDarkMode,
             onChanged: (value) {
               setState(() => _isDarkMode = value);
@@ -35,26 +37,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.info_outline),
-            title: const Text('About'),
-            subtitle: const Text('LinguaSense v1.0.0'),
+            title: const Text(AppStrings.about),
+            subtitle: Text('${AppStrings.appName} ${AppStrings.appVersion}'),
             onTap: () {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: const Text('About LinguaSense'),
-                  content: const Text(
-                    'A beautiful text analysis app with multiple NLP features.\n\n'
-                    'Features:\n'
-                    '• Sentiment Analysis\n'
-                    '• Translation\n'
-                    '• Paraphrasing\n'
-                    '• Named Entity Recognition\n'
-                    '• Text Summarization',
+                  title: const Text(AppStrings.aboutLinguaSense),
+                  content: Text(
+                    '${AppStrings.appDescription}\n\n'
+                    '${AppStrings.features}:\n'
+                    '${AppStrings.featureSentimentAnalysis}\n'
+                    '${AppStrings.featureTranslation}\n'
+                    '${AppStrings.featureParaphrasing}\n'
+                    '${AppStrings.featureNER}\n'
+                    '${AppStrings.featureSummarization}',
                   ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Close'),
+                      child: const Text(AppStrings.close),
                     ),
                   ],
                 ),

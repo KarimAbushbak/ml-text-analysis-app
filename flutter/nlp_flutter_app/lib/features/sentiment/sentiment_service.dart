@@ -2,13 +2,14 @@ import 'package:lingua_sense/features/sentiment/sentiment_model.dart';
 
 import '../../core/utils/api_client.dart';
 import '../../core/exceptions/api_exceptions.dart';
+import '../../core/constants/api_constants.dart';
 
 /// Service for sentiment analysis API calls
 class SentimentService {
   Future<SentimentResult> analyzeSentiment({required String text}) async {
     try {
       final response = await ApiClient.post(
-        endpoint: '/analyze',
+        endpoint: ApiConstants.endpointAnalyze,
         body: {'text': text},
       );
 

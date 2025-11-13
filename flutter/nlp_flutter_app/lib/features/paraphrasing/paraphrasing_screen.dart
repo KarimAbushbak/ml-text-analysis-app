@@ -5,6 +5,8 @@ import '../../core/widgets/primary_button.dart';
 import '../../core/widgets/result_card.dart';
 import '../../core/widgets/loading_indicator.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/constants/app_strings.dart';
+import '../../core/constants/app_dimensions.dart';
 import 'paraphrasing_cubit.dart';
 import 'paraphrasing_state.dart';
 
@@ -38,45 +40,45 @@ class _ParaphrasingScreenState extends State<ParaphrasingScreen> {
       create: (context) => ParaphrasingCubit(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Paraphrasing'),
+          title: const Text(AppStrings.paraphrasingTitle),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
         body: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: AppDimensions.padding20,
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
-                  'Enter text to paraphrase',
+                Text(
+                  AppStrings.enterTextToParaphrase,
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
+                    fontSize: AppDimensions.fontSize18,
+                    fontWeight: AppDimensions.fontWeight600,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: AppDimensions.spacing20),
                 TextInputField(
                   controller: _textController,
-                  label: 'Original Text',
-                  hint: 'Enter text to paraphrase...',
-                  maxLines: 8,
-                  maxLength: 500,
+                  label: AppStrings.originalText,
+                  hint: AppStrings.enterTextToParaphraseHint,
+                  maxLines: AppDimensions.textInputMaxLines8,
+                  maxLength: AppDimensions.textInputMaxLength500,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppDimensions.spacing24),
                 Builder(
                   builder: (context) {
                     return PrimaryButton(
-                      text: 'Paraphrase',
+                      text: AppStrings.paraphrase,
                       gradient: AppColors.orangeGradient,
                       onPressed: () => _paraphrase(context),
                     );
                   }
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: AppDimensions.spacing32),
                 BlocBuilder<ParaphrasingCubit, ParaphrasingState>(
                   builder: (context, state) {
                     if (state is ParaphrasingLoading) {
@@ -85,7 +87,7 @@ class _ParaphrasingScreenState extends State<ParaphrasingScreen> {
 
                     if (state is ParaphrasingSuccess) {
                       return ResultCard(
-                        title: 'Paraphrased Text',
+                        title: AppStrings.paraphrasedText,
                         icon: Icons.edit_note,
                         color: AppColors.primaryOrange,
                         content: state.result.paraphrasedText,
@@ -94,7 +96,7 @@ class _ParaphrasingScreenState extends State<ParaphrasingScreen> {
 
                     if (state is ParaphrasingError) {
                       return ResultCard(
-                        title: 'Error',
+                        title: AppStrings.error,
                         icon: Icons.error_outline,
                         color: AppColors.primaryRed,
                         content: state.message,

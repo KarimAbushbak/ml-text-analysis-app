@@ -8,55 +8,56 @@ import '../../features/summarization/summarization_screen.dart';
 import '../../features/history/history_screen.dart';
 import '../../features/settings/settings_screen.dart';
 import '../../features/splash/splash_screen.dart';
+import '../constants/api_constants.dart';
 
 /// App router configuration using GoRouter
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: '/splash',
+    initialLocation: ApiConstants.routeSplash,
     routes: [
       GoRoute(
-        path: '/splash',
-        name: 'splash',
+        path: ApiConstants.routeSplash,
+        name: ApiConstants.routeNameSplash,
         builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(
-        path: '/home',
-        name: 'home',
+        path: ApiConstants.routeHome,
+        name: ApiConstants.routeNameHome,
         builder: (context, state) => const HomeScreen(),
       ),
       GoRoute(
-        path: '/sentiment',
-        name: 'sentiment',
+        path: ApiConstants.routeSentiment,
+        name: ApiConstants.routeNameSentiment,
         builder: (context, state) => const SentimentScreen(),
       ),
       GoRoute(
-        path: '/translation',
-        name: 'translation',
+        path: ApiConstants.routeTranslation,
+        name: ApiConstants.routeNameTranslation,
         builder: (context, state) => const TranslationScreen(),
       ),
       GoRoute(
-        path: '/paraphrasing',
-        name: 'paraphrasing',
+        path: ApiConstants.routeParaphrasing,
+        name: ApiConstants.routeNameParaphrasing,
         builder: (context, state) => const ParaphrasingScreen(),
       ),
       GoRoute(
-        path: '/ner',
-        name: 'ner',
+        path: ApiConstants.routeNER,
+        name: ApiConstants.routeNameNER,
         builder: (context, state) => const NERScreen(),
       ),
       GoRoute(
-        path: '/summarization',
-        name: 'summarization',
+        path: ApiConstants.routeSummarization,
+        name: ApiConstants.routeNameSummarization,
         builder: (context, state) => const SummarizationScreen(),
       ),
       GoRoute(
-        path: '/history',
-        name: 'history',
+        path: ApiConstants.routeHistory,
+        name: ApiConstants.routeNameHistory,
         builder: (context, state) => const HistoryScreen(),
       ),
       GoRoute(
-        path: '/settings',
-        name: 'settings',
+        path: ApiConstants.routeSettings,
+        name: ApiConstants.routeNameSettings,
         builder: (context, state) => const SettingsScreen(),
       ),
     ],

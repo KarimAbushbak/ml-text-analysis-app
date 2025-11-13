@@ -1,5 +1,6 @@
 import '../../core/utils/api_client.dart';
 import '../../core/exceptions/api_exceptions.dart';
+import '../../core/constants/api_constants.dart';
 
 /// Service for text summarization API calls
 class SummarizationService {
@@ -7,7 +8,7 @@ class SummarizationService {
   Future<String> summarize({required String text}) async {
     try {
       final response = await ApiClient.post(
-        endpoint: '/summarize',
+        endpoint: ApiConstants.endpointSummarize,
         body: {'text': text},
       );
 

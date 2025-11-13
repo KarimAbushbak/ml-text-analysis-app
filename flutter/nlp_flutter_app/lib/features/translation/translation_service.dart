@@ -1,5 +1,6 @@
 import '../../core/utils/api_client.dart';
 import '../../core/exceptions/api_exceptions.dart';
+import '../../core/constants/api_constants.dart';
 import 'translation_model.dart';
 
 class TranslationService {
@@ -10,7 +11,7 @@ class TranslationService {
   }) async {
     try {
       final response = await ApiClient.post(
-        endpoint: '/translate',
+        endpoint: ApiConstants.endpointTranslate,
         body: {
           'text': text,
           'source_lang': sourceLang,

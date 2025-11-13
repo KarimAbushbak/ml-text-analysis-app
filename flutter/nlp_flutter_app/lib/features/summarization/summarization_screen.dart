@@ -5,6 +5,8 @@ import '../../core/widgets/primary_button.dart';
 import '../../core/widgets/result_card.dart';
 import '../../core/widgets/loading_indicator.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/constants/app_strings.dart';
+import '../../core/constants/app_dimensions.dart';
 import 'summarization_cubit.dart';
 import 'summarization_state.dart';
 
@@ -40,45 +42,45 @@ class _SummarizationScreenState extends State<SummarizationScreen> {
       create: (context) => SummarizationCubit(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Text Summarization'),
+          title: const Text(AppStrings.summarizationTitle),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
         body: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: AppDimensions.padding20,
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
-                  'Enter text to summarize',
+                Text(
+                  AppStrings.enterTextToSummarize,
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
+                    fontSize: AppDimensions.fontSize18,
+                    fontWeight: AppDimensions.fontWeight600,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: AppDimensions.spacing20),
                 TextInputField(
                   controller: _textController,
-                  label: 'Original Text',
-                  hint: 'Enter text to summarize (minimum 100 characters)...',
-                  maxLines: 10,
-                  maxLength: 2000,
+                  label: AppStrings.originalText,
+                  hint: AppStrings.enterTextToSummarizeHint,
+                  maxLines: AppDimensions.textInputMaxLines10,
+                  maxLength: AppDimensions.textInputMaxLength2000,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppDimensions.spacing24),
                 Builder(
                   builder: (context) {
                     return PrimaryButton(
-                      text: 'Summarize',
+                      text: AppStrings.summarize,
                       gradient: AppColors.orangeGradient,
                       onPressed: () => _summarize(context),
                     );
                   }
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: AppDimensions.spacing32),
                 BlocBuilder<SummarizationCubit, SummarizationState>(
                   builder: (context, state) {
                     if (state is SummarizationLoading) {
@@ -89,23 +91,23 @@ class _SummarizationScreenState extends State<SummarizationScreen> {
                       return Column(
                         children: [
                           ResultCard(
-                            title: 'Summary',
+                            title: AppStrings.summary,
                             icon: Icons.summarize,
                             color: AppColors.primaryOrange,
                             content: state.result.summary,
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: AppDimensions.spacing12),
                           Text(
-                            'Original length: ${state.result.originalText.length} characters',
+                            '${AppStrings.originalLength}: ${state.result.originalText.length} ${AppStrings.characters}',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: AppDimensions.fontSize14,
                               color: Colors.grey[600],
                             ),
                           ),
                           Text(
-                            'Summary length: ${state.result.summary.length} characters',
+                            '${AppStrings.summaryLength}: ${state.result.summary.length} ${AppStrings.characters}',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: AppDimensions.fontSize14,
                               color: Colors.grey[600],
                             ),
                           ),
@@ -115,7 +117,7 @@ class _SummarizationScreenState extends State<SummarizationScreen> {
 
                     if (state is SummarizationError) {
                       return ResultCard(
-                        title: 'Error',
+                        title: AppStrings.error,
                         icon: Icons.error_outline,
                         color: AppColors.primaryRed,
                         content: state.message,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../constants/app_dimensions.dart';
 
 /// Multiline text input field with modern styling
 class TextInputField extends StatelessWidget {
@@ -20,7 +21,7 @@ class TextInputField extends StatelessWidget {
     this.initialValue,
     this.onChanged,
     this.controller,
-    this.maxLines = 5,
+    this.maxLines = AppDimensions.textInputMaxLinesDefault,
     this.maxLength,
     this.readOnly = false,
     this.inputFormatters,
@@ -35,10 +36,10 @@ class TextInputField extends StatelessWidget {
           Text(
             label!,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
+                  fontWeight: AppDimensions.fontWeight600,
                 ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppDimensions.spacing8),
         ],
         TextFormField(
           controller: controller,
@@ -56,7 +57,7 @@ class TextInputField extends StatelessWidget {
                       : Colors.black54,
                 ),
             filled: true,
-            contentPadding: const EdgeInsets.all(16),
+            contentPadding: AppDimensions.padding16,
           ),
         ),
       ],

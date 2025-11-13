@@ -7,6 +7,8 @@ import '../../core/widgets/primary_button.dart';
 import '../../core/widgets/result_card.dart';
 import '../../core/widgets/loading_indicator.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/constants/app_strings.dart';
+import '../../core/constants/app_dimensions.dart';
 
 /// Sentiment Analysis screen
 class SentimentScreen extends StatefulWidget {
@@ -38,45 +40,45 @@ class _SentimentScreenState extends State<SentimentScreen> {
       create: (context) => SentimentCubit(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Sentiment Analysis'),
+          title: const Text(AppStrings.sentimentAnalysisTitle),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
         body: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: AppDimensions.padding20,
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                  const Text(
-                    'Enter the text you want to analyze',
+                  Text(
+                    AppStrings.enterTextToAnalyze,
                     style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
+                      fontSize: AppDimensions.fontSize18,
+                      fontWeight: AppDimensions.fontWeight600,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: AppDimensions.spacing20),
                   TextInputField(
                     controller: _textController,
-                    label: 'Your Text',
-                    hint: 'Type or paste your text here...',
-                    maxLines: 8,
-                    maxLength: 500,
+                    label: AppStrings.yourText,
+                    hint: AppStrings.typeOrPasteText,
+                    maxLines: AppDimensions.textInputMaxLines8,
+                    maxLength: AppDimensions.textInputMaxLength500,
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AppDimensions.spacing24),
                   Builder(
                     builder: (context) {
                       return PrimaryButton(
-                        text: 'Analyze Sentiment',
+                        text: AppStrings.analyzeSentiment,
                         gradient: AppColors.greenGradient,
                         onPressed: () => _analyzeSentiment(context),
                       );
                     }
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: AppDimensions.spacing32),
                   BlocBuilder<SentimentCubit, SentimentState>(
                     builder: (context, state) {
                       if (state is SentimentLoading) {
@@ -85,20 +87,20 @@ class _SentimentScreenState extends State<SentimentScreen> {
 
                       if (state is SentimentSuccess) {
                         return ResultCard(
-                          title: 'Sentiment Result',
+                          title: AppStrings.sentimentResult,
                           icon: Icons.sentiment_satisfied,
                           color: AppColors.primaryGreen,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _buildSentimentResult(
-                                'Sentiment',
+                                AppStrings.sentiment,
                                 state.result.sentiment,
                                 _getSentimentColor(state.result.sentiment),
                               ),
-                              const SizedBox(height: 12),
+                              const SizedBox(height: AppDimensions.spacing12),
                               _buildSentimentResult(
-                                'Confidence',
+                                AppStrings.confidence,
                                 '${(state.result.confidence * 100)
                                     .toStringAsFixed(1)}%',
                                 AppColors.primaryBlue,
@@ -110,7 +112,7 @@ class _SentimentScreenState extends State<SentimentScreen> {
 
                       if (state is SentimentError) {
                         return ResultCard(
-                          title: 'Error',
+                          title: AppStrings.error,
                           icon: Icons.error_outline,
                           color: AppColors.primaryRed,
                           content: state.message,
@@ -130,10 +132,10 @@ class _SentimentScreenState extends State<SentimentScreen> {
 
   Widget _buildSentimentResult(String label, String value, Color color) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppDimensions.padding16,
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius12),
         border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
@@ -141,16 +143,16 @@ class _SentimentScreenState extends State<SentimentScreen> {
         children: [
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
+            style: TextStyle(
+              fontSize: AppDimensions.fontSize16,
+              fontWeight: AppDimensions.fontWeight500,
             ),
           ),
           Text(
             value,
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+              fontSize: AppDimensions.fontSize16,
+              fontWeight: AppDimensions.fontWeightBold,
               color: color,
             ),
           ),

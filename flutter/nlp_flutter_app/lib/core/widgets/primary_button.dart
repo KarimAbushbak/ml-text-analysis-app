@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import '../constants/app_dimensions.dart';
 
 /// Primary button with gradient and rounded corners
 class PrimaryButton extends StatelessWidget {
@@ -22,38 +23,38 @@ class PrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: width,
-      height: 56,
+      height: AppDimensions.buttonHeight,
       decoration: BoxDecoration(
         gradient: gradient ?? AppColors.blueGradient,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppDimensions.buttonBorderRadius),
         boxShadow: [
           BoxShadow(
             color: (gradient?.colors.first ?? AppColors.primaryBlue).withValues(alpha: 0.3),
-            offset: const Offset(0, 4),
-            blurRadius: 12,
+            offset: AppDimensions.shadowOffset,
+            blurRadius: AppDimensions.shadowBlurRadius,
           ),
         ],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppDimensions.buttonBorderRadius),
           onTap: isLoading ? null : onPressed,
           child: Center(
             child: isLoading
-                ? const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
+                ? SizedBox(
+                    width: AppDimensions.loadingIndicatorSize,
+                    height: AppDimensions.loadingIndicatorSize,
+                    child: const CircularProgressIndicator(
+                      strokeWidth: AppDimensions.loadingIndicatorStrokeWidth,
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
                   )
                 : Text(
                     text,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                    style: TextStyle(
+                      fontSize: AppDimensions.fontSize16,
+                      fontWeight: AppDimensions.fontWeight600,
                       color: Colors.white,
                     ),
                   ),

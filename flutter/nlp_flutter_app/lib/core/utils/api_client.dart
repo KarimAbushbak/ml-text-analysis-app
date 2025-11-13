@@ -3,38 +3,36 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../exceptions/api_exceptions.dart';
+import '../constants/api_constants.dart';
 import 'network_info.dart';
 
 /// API client for making HTTP requests to backend
 class ApiClient {
   // Configuration
-  static const Duration _timeout = Duration(seconds: 30);
-  static const int _maxRetries = 3;
-  static const Duration _initialRetryDelay = Duration(seconds: 1);
+  static const Duration _timeout = ApiConstants.requestTimeout;
+  static const int _maxRetries = ApiConstants.maxRetries;
+  static const Duration _initialRetryDelay = ApiConstants.initialRetryDelay;
 
   static final NetworkInfo _networkInfo = NetworkInfo.create();
 
   /// Get base URL based on platform
   /// Set USE_PRODUCTION to true to use live Hugging Face Spaces API
-  static const bool USE_PRODUCTION = true;
-  static const String PRODUCTION_URL = 'https://karim323-nlp-analysis-api.hf.space';
-  
   static String get baseUrl {
     // Use production API if enabled
-    if (USE_PRODUCTION) {
-      return PRODUCTION_URL;
+    if (ApiConstants.useProduction) {
+      return ApiConstants.productionUrl;
     }
     
     // Otherwise use local backend
     if (Platform.isAndroid) {
       // Android emulator uses 10.0.2.2 to access host localhost
-      return 'http://10.0.2.2:8000';
+      return ApiConstants.localUrlAndroid;
     } else if (Platform.isIOS) {
       // iOS simulator can use localhost
-      return 'http://localhost:8000';
+      return ApiConstants.localUrlIOS;
     } else {
       // Desktop platforms
-      return 'http://localhost:8000';
+      return ApiConstants.localUrlDesktop;
     }
   }
 
@@ -79,7 +77,7 @@ class ApiClient {
           .post(
             Uri.parse('$baseUrl$endpoint'),
             headers: {
-              'Content-Type': 'application/json',
+              ApiConstants.headerContentType: ApiConstants.headerContentTypeJson,
               if (headers != null) ...headers,
             },
             body: jsonEncode(body),
@@ -113,7 +111,7 @@ class ApiClient {
           .get(
             Uri.parse('$baseUrl$endpoint'),
             headers: {
-              'Content-Type': 'application/json',
+              ApiConstants.headerContentType: ApiConstants.headerContentTypeJson,
               if (headers != null) ...headers,
             },
           )

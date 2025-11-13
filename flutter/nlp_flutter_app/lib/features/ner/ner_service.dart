@@ -1,5 +1,6 @@
 import '../../core/utils/api_client.dart';
 import '../../core/exceptions/api_exceptions.dart';
+import '../../core/constants/api_constants.dart';
 import 'ner_model.dart';
 
 class NERService {
@@ -7,7 +8,7 @@ class NERService {
   Future<List<NerResult>> recognizeEntities({required String text}) async {
     try {
       final response = await ApiClient.post(
-        endpoint: '/ner',
+        endpoint: ApiConstants.endpointNER,
         body: {'text': text},
       );
       

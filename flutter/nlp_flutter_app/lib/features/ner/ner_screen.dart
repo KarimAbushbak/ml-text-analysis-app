@@ -5,6 +5,8 @@ import '../../core/widgets/primary_button.dart';
 import '../../core/widgets/result_card.dart';
 import '../../core/widgets/loading_indicator.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/constants/app_strings.dart';
+import '../../core/constants/app_dimensions.dart';
 import 'ner_cubit.dart';
 import 'ner_state.dart';
 import 'ner_model.dart';
@@ -39,45 +41,45 @@ class _NERScreenState extends State<NERScreen> {
       create: (context) => NERCubit(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Named Entity Recognition'),
+          title: const Text(AppStrings.nerTitle),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
         body: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: AppDimensions.padding20,
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
-                  'Enter text to extract named entities',
+                Text(
+                  AppStrings.enterTextToExtractEntities,
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
+                    fontSize: AppDimensions.fontSize18,
+                    fontWeight: AppDimensions.fontWeight600,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: AppDimensions.spacing20),
                 TextInputField(
                   controller: _textController,
-                  label: 'Your Text',
-                  hint: 'Enter text to find named entities...',
-                  maxLines: 8,
-                  maxLength: 500,
+                  label: AppStrings.yourText,
+                  hint: AppStrings.enterTextToFindEntities,
+                  maxLines: AppDimensions.textInputMaxLines8,
+                  maxLength: AppDimensions.textInputMaxLength500,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppDimensions.spacing24),
                 Builder(
                   builder: (context) {
                     return PrimaryButton(
-                      text: 'Find Entities',
+                      text: AppStrings.findEntities,
                       gradient: AppColors.purpleGradient,
                       onPressed: () => _recognizeEntities(context),
                     );
                   }
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: AppDimensions.spacing32),
                 BlocBuilder<NERCubit, NERState>(
                   builder: (context, state) {
                     if (state is NERLoading) {
@@ -87,15 +89,15 @@ class _NERScreenState extends State<NERScreen> {
                     if (state is NERSuccess) {
                       if (state.entities.isEmpty) {
                         return ResultCard(
-                          title: 'No Entities Found',
+                          title: AppStrings.noEntitiesFound,
                           icon: Icons.info_outline,
                           color: AppColors.primaryBlue,
-                          content: 'No named entities were detected in the text.',
+                          content: AppStrings.noEntitiesDetected,
                         );
                       }
 
                       return ResultCard(
-                        title: 'Found Entities (${state.entities.length})',
+                        title: '${AppStrings.foundEntities} (${state.entities.length})',
                         icon: Icons.person_search,
                         color: AppColors.primaryPurple,
                         child: Column(
@@ -106,7 +108,7 @@ class _NERScreenState extends State<NERScreen> {
 
                     if (state is NERError) {
                       return ResultCard(
-                        title: 'Error',
+                        title: AppStrings.error,
                         icon: Icons.error_outline,
                         color: AppColors.primaryRed,
                         content: state.message,
@@ -126,33 +128,33 @@ class _NERScreenState extends State<NERScreen> {
 
   Widget _buildEntityChip(NerResult entity) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: EdgeInsets.symmetric(vertical: AppDimensions.spacing4),
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: AppDimensions.padding12,
         decoration: BoxDecoration(
           color: AppColors.primaryPurple.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius8),
         ),
         child: Row(
           children: [
             Icon(
               _getEntityIcon(entity.label),
               color: AppColors.primaryPurple,
-              size: 20,
+              size: AppDimensions.iconSize20,
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AppDimensions.spacing12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     entity.text,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                    style: TextStyle(fontWeight: AppDimensions.fontWeight600),
                   ),
                   Text(
-                    'Confidence: ${(entity.score * 100).toStringAsFixed(1)}%',
+                    '${AppStrings.confidence}: ${(entity.score * 100).toStringAsFixed(1)}%',
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: AppDimensions.fontSize12,
                       color: Colors.grey[600],
                     ),
                   ),
@@ -160,17 +162,17 @@ class _NERScreenState extends State<NERScreen> {
               ),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: EdgeInsets.symmetric(horizontal: AppDimensions.spacing8, vertical: AppDimensions.spacing4),
               decoration: BoxDecoration(
                 color: AppColors.primaryPurple,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AppDimensions.borderRadius12),
               ),
               child: Text(
                 _getEntityLabel(entity.label),
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+                  fontSize: AppDimensions.fontSize12,
+                  fontWeight: AppDimensions.fontWeight600,
                 ),
               ),
             ),
@@ -185,24 +187,24 @@ class _NERScreenState extends State<NERScreen> {
     switch (label.toUpperCase()) {
       case 'PER':
       case 'PERSON':
-        return 'Person';
+        return AppStrings.entityPerson;
       case 'LOC':
       case 'LOCATION':
-        return 'Location';
+        return AppStrings.entityLocation;
       case 'ORG':
       case 'ORGANIZATION':
-        return 'Organization';
+        return AppStrings.entityOrganization;
       case 'MISC':
       case 'MISCELLANEOUS':
-        return 'Misc';
+        return AppStrings.entityMisc;
       case 'DATE':
-        return 'Date';
+        return AppStrings.entityDate;
       case 'TIME':
-        return 'Time';
+        return AppStrings.entityTime;
       case 'MONEY':
-        return 'Money';
+        return AppStrings.entityMoney;
       case 'PERCENT':
-        return 'Percent';
+        return AppStrings.entityPercent;
       default:
         return label;
     }

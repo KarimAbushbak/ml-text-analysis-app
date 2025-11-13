@@ -6,6 +6,8 @@ import '../../core/widgets/result_card.dart';
 import '../../core/widgets/loading_indicator.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/constants/language_constants.dart';
+import '../../core/constants/app_strings.dart';
+import '../../core/constants/app_dimensions.dart';
 import 'translation_cubit.dart';
 
 /// Translation screen
@@ -41,45 +43,45 @@ class _TranslationScreenState extends State<TranslationScreen> {
       create: (context) => TranslationCubit(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Translation'),
+          title: const Text(AppStrings.translationTitle),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
         body: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: AppDimensions.padding20,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _buildLanguageSelector(
-                'From',
+                AppStrings.from,
                 _selectedSourceLang,
                     (value) => setState(() => _selectedSourceLang = value),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: AppDimensions.spacing20),
               TextInputField(
                 controller: _textController,
-                label: 'Source Text',
-                hint: 'Enter text to translate...',
-                maxLines: 6,
-                maxLength: 500,
+                label: AppStrings.sourceText,
+                hint: AppStrings.enterTextToTranslate,
+                maxLines: AppDimensions.textInputMaxLines6,
+                maxLength: AppDimensions.textInputMaxLength500,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: AppDimensions.spacing20),
               _buildLanguageSelector(
-                'To',
+                AppStrings.to,
                 _selectedTargetLang,
                     (value) => setState(() => _selectedTargetLang = value),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: AppDimensions.spacing20),
               Builder(
                 builder: (context) => PrimaryButton(
-                  text: 'Translate',
+                  text: AppStrings.translate,
                   gradient: AppColors.blueGradient,
                   onPressed: () => _translate(context),
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: AppDimensions.spacing32),
               BlocBuilder<TranslationCubit, TranslationState>(
                 builder: (context, state) {
                   if (state is TranslationLoading) {
@@ -90,7 +92,7 @@ class _TranslationScreenState extends State<TranslationScreen> {
                     return Column(
                       children: [
                         ResultCard(
-                          title: 'Translation',
+                          title: AppStrings.translation,
                           icon: Icons.translate,
                           color: AppColors.primaryBlue,
                           child: Column(
@@ -99,19 +101,19 @@ class _TranslationScreenState extends State<TranslationScreen> {
                               Text(
                                 '${LanguageConstants.getLanguageName(state.result.sourceLang)} → ${LanguageConstants.getLanguageName(state.result.targetLang)}',
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: AppDimensions.fontSize12,
                                   color: AppColors.primaryBlue,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: AppDimensions.fontWeight600,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: AppDimensions.spacing8),
                               const Divider(),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: AppDimensions.spacing8),
                               Text(
                                 state.result.translatedText,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
+                                style: TextStyle(
+                                  fontSize: AppDimensions.fontSize16,
+                                  fontWeight: AppDimensions.fontWeight500,
                                 ),
                               ),
                             ],
@@ -123,7 +125,7 @@ class _TranslationScreenState extends State<TranslationScreen> {
 
                   if (state is TranslationFailure) {
                     return ResultCard(
-                      title: 'Error',
+                      title: AppStrings.error,
                       icon: Icons.error_outline,
                       color: AppColors.primaryRed,
                       content: state.errorMessage,
@@ -148,15 +150,15 @@ class _TranslationScreenState extends State<TranslationScreen> {
         Text(
           label,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
+            fontWeight: AppDimensions.fontWeight600,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppDimensions.spacing8),
         DropdownButtonFormField<String>(
           value: selectedCode,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             filled: true,
-            contentPadding: EdgeInsets.all(16),
+            contentPadding: AppDimensions.padding16,
           ),
           items: LanguageConstants.languageNames.entries.map((entry) {
             return DropdownMenuItem(
