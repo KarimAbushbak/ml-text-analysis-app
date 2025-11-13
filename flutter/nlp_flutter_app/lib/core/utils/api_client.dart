@@ -15,7 +15,17 @@ class ApiClient {
   static final NetworkInfo _networkInfo = NetworkInfo.create();
 
   /// Get base URL based on platform
+  /// Set USE_PRODUCTION to true to use live Hugging Face Spaces API
+  static const bool USE_PRODUCTION = true;
+  static const String PRODUCTION_URL = 'https://karim323-nlp-analysis-api.hf.space';
+  
   static String get baseUrl {
+    // Use production API if enabled
+    if (USE_PRODUCTION) {
+      return PRODUCTION_URL;
+    }
+    
+    // Otherwise use local backend
     if (Platform.isAndroid) {
       // Android emulator uses 10.0.2.2 to access host localhost
       return 'http://10.0.2.2:8000';
