@@ -70,13 +70,14 @@ class HomeScreen extends StatelessWidget {
               AppStrings.welcome,
               style: Theme.of(context).textTheme.displaySmall?.copyWith(
                     fontWeight: AppDimensions.fontWeightBold,
+                    color: Theme.of(context).textTheme.displaySmall?.color,
                   ),
             ),
             const SizedBox(height: AppDimensions.spacing8),
             Text(
               AppStrings.chooseFeature,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).textTheme.bodySmall?.color,
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
                   ),
             ),
             const SizedBox(height: AppDimensions.spacing32),

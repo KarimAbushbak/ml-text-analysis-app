@@ -34,9 +34,12 @@ class FeatureCard extends StatelessWidget {
           boxShadow: [
             if (isDark)
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+                color: gradient != null
+                    ? (gradient!.colors.first).withValues(alpha: 0.3)
+                    : Colors.black.withValues(alpha: 0.5),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+                spreadRadius: 0,
               )
             else
               BoxShadow(

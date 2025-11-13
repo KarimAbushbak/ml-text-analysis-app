@@ -108,11 +108,19 @@ class AppTheme {
         fontWeight: FontWeight.bold,
         color: AppColors.textPrimaryDark,
       ),
+      displaySmall: _textTheme.displaySmall?.copyWith(
+        fontWeight: FontWeight.bold,
+        color: AppColors.textPrimaryDark,
+      ),
       headlineMedium: _textTheme.headlineMedium?.copyWith(
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimaryDark,
       ),
       titleLarge: _textTheme.titleLarge?.copyWith(
+        fontWeight: FontWeight.w600,
+        color: AppColors.textPrimaryDark,
+      ),
+      titleMedium: _textTheme.titleMedium?.copyWith(
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimaryDark,
       ),
@@ -132,13 +140,16 @@ class AppTheme {
         borderRadius: BorderRadius.circular(20),
       ),
       color: AppColors.cardDark,
-      shadowColor: Colors.black.withValues(alpha: 0.3),
+      shadowColor: Colors.black.withValues(alpha: 0.5),
     ),
     appBarTheme: AppBarTheme(
       elevation: 0,
       centerTitle: true,
       backgroundColor: AppColors.backgroundDark,
       foregroundColor: AppColors.textPrimaryDark,
+      iconTheme: const IconThemeData(
+        color: AppColors.textPrimaryDark,
+      ),
       titleTextStyle: _textTheme.titleLarge?.copyWith(
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimaryDark,
@@ -156,18 +167,36 @@ class AppTheme {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: AppColors.cardDark,
+      hintStyle: TextStyle(
+        color: AppColors.textSecondaryDark.withValues(alpha: 0.7),
+      ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: AppColors.textSecondaryDark.withValues(alpha: 0.2)),
+        borderSide: BorderSide(
+          color: AppColors.textSecondaryDark.withValues(alpha: 0.3),
+        ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: AppColors.textSecondaryDark.withValues(alpha: 0.2)),
+        borderSide: BorderSide(
+          color: AppColors.textSecondaryDark.withValues(alpha: 0.3),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: AppColors.primaryBlue, width: 2),
+        borderSide: const BorderSide(
+          color: AppColors.primaryBlue,
+          width: 2,
+        ),
       ),
+    ),
+    dividerTheme: DividerThemeData(
+      color: AppColors.textSecondaryDark.withValues(alpha: 0.2),
+      thickness: 1,
+    ),
+    listTileTheme: ListTileThemeData(
+      textColor: AppColors.textPrimaryDark,
+      iconColor: AppColors.textPrimaryDark,
     ),
   );
 }
