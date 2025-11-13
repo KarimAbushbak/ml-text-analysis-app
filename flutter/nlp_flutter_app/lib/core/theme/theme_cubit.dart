@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'theme_state.dart';
 
-/// Theme provider to manage app theme state
-class ThemeProvider extends ChangeNotifier {
+/// Cubit for managing app theme state
+class ThemeCubit extends Cubit<ThemeState> {
   static const String _themeKey = 'theme_mode';
   ThemeMode _themeMode = ThemeMode.system;
 
+  ThemeCubit() : super(ThemeInitial()) {
+    _loadTheme();
+  }
+
+  /// Get current theme mode
   ThemeMode get themeMode => _themeMode;
 
+  /// Check if dark mode is currently active
   bool get isDarkMode {
     if (_themeMode == ThemeMode.system) {
       return WidgetsBinding.instance.platformDispatcher.platformBrightness ==
@@ -16,10 +24,7 @@ class ThemeProvider extends ChangeNotifier {
     return _themeMode == ThemeMode.dark;
   }
 
-  ThemeProvider() {
-    _loadTheme();
-  }
-
+  /// Load saved theme preference from storage
   Future<void> _loadTheme() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -29,19 +34,21 @@ class ThemeProvider extends ChangeNotifier {
           (mode) => mode.toString() == savedTheme,
           orElse: () => ThemeMode.system,
         );
-        notifyListeners();
       }
+      emit(ThemeLoaded(themeMode: _themeMode, isDarkMode: isDarkMode));
     } catch (e) {
       // If there's an error, use system default
       _themeMode = ThemeMode.system;
+      emit(ThemeLoaded(themeMode: _themeMode, isDarkMode: isDarkMode));
     }
   }
 
+  /// Set theme mode explicitly
   Future<void> setThemeMode(ThemeMode mode) async {
     if (_themeMode == mode) return;
 
     _themeMode = mode;
-    notifyListeners();
+    emit(ThemeLoaded(themeMode: _themeMode, isDarkMode: isDarkMode));
 
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -51,6 +58,7 @@ class ThemeProvider extends ChangeNotifier {
     }
   }
 
+  /// Toggle between light and dark themes
   Future<void> toggleTheme() async {
     if (_themeMode == ThemeMode.system) {
       // If system mode, toggle to dark first

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/constants/app_dimensions.dart';
-import '../../core/theme/theme_provider.dart';
+import '../../core/theme/theme_cubit.dart';
+import '../../core/theme/theme_state.dart';
 
 /// Settings screen
 class SettingsScreen extends StatelessWidget {
@@ -10,9 +11,6 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDarkMode = themeProvider.isDarkMode;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(AppStrings.settingsTitle),
@@ -23,12 +21,20 @@ class SettingsScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          SwitchListTile(
-            title: const Text(AppStrings.darkMode),
-            subtitle: const Text(AppStrings.toggleDarkTheme),
-            value: isDarkMode,
-            onChanged: (value) {
-              themeProvider.toggleTheme();
+          BlocBuilder<ThemeCubit, ThemeState>(
+            builder: (context, state) {
+              final isDarkMode = state is ThemeLoaded
+                  ? state.isDarkMode
+                  : false;
+
+              return SwitchListTile(
+                title: const Text(AppStrings.darkMode),
+                subtitle: const Text(AppStrings.toggleDarkTheme),
+                value: isDarkMode,
+                onChanged: (value) {
+                  context.read<ThemeCubit>().toggleTheme();
+                },
+              );
             },
           ),
           const Divider(),
